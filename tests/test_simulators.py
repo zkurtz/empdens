@@ -4,7 +4,7 @@ import pytest
 def test_zena():
     import numpy as np
     import pandas as pd
-    from pydens import simulators
+    from empdens import simulators
     np.random.seed(0)
     N = 100
     sz = simulators.bivariate.Zena()

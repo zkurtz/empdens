@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import pandas as pd
 
 class AbstractDensity(ABC):
     '''
@@ -39,3 +40,13 @@ class AbstractDensity(ABC):
         ''' A print function that respects self.verbose '''
         if self.verbose:
             print(string)
+
+    def _validate_data(self, data):
+        try:
+            assert isinstance(data, pd.DataFrame)
+        except:
+            raise Exception("the data needs to be a pandas.DataFrame")
+        try:
+            assert isinstance(data.columns[0], str)
+        except:
+            raise Exception("the data column names need to be strings, not " + str(type(data.columns[0])))

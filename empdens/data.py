@@ -2,7 +2,7 @@ import pandas as pd
 import pkg_resources
 
 class CadeData(object):
-    ''' A standardized data format for pydens.cade.Cade '''
+    ''' A standardized data format for empdens.cade.Cade '''
     def __init__(self, X, y):
         assert isinstance(X, pd.DataFrame)
         assert len(y.shape)==1
@@ -12,7 +12,7 @@ class CadeData(object):
 
 def load_Japanese_vowels_data():
     ''' Data downloaded from http://odds.cs.stonybrook.edu/japanese-vowels-data/ '''
-    DATA_PATH = pkg_resources.resource_filename('pydens', 'resources/data/japanese_vowels.csv')
+    DATA_PATH = pkg_resources.resource_filename('empdens', 'resources/data/japanese_vowels.csv')
     return pd.read_csv(DATA_PATH)
 
 def load_SHAP_census_data():

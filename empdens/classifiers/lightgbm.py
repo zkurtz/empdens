@@ -7,37 +7,61 @@ import tempfile
 from time import time
 import warnings
 
-import xgboost as xgb
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    try:
+        import lightgbm as lgb
+    except:
+        pass
 
 from .base import AbstractLearner
 
-class Xgbm(AbstractLearner):
-    def __init__(self, params=None, verbose=False):
+def assert_lightgbm_installed():
+    try:
+        lgb
+    except:
+        raise Exception("empdens.classifiers.lightgbm.Lgbm requires lightgbm to be installed, but it is not")
+
+class Lgbm(AbstractLearner):
+    def __init__(self, params=None, categorical_features=None, verbose=False):
         super().__init__(params, verbose)
+        assert_lightgbm_installed()
         self.nround = self.params.pop('num_boost_round')
+        self.categorical_features = categorical_features
 
     def default_params(self):
         return {
             'task': 'train',
             'boosting_type': 'gbdt',
-            'objective': 'binary',
-            'learning_rate': 0.1,
-            'max_depth': 6,
+            'objective': 'xentropy',
+            'learning_rate': 0.07,
+            'num_leaves': 20,
+            'min_data_in_leaf': 20,
             'verbose': -1,
-            'nrounds': 60,
-            'nthreads': cpu_count(logical=False)
+            'num_boost_round': 50,
+            'num_threads': cpu_count(logical=False)
         }
 
-    def as_xgb_data(self, data):
+    def _parse_categoricals(self):
+        if self.categorical_features is None:
+            self.categoricals='auto'
+        else:
+            self.categoricals = self.categorical_features
+            assert all([c in self.features for c in self.categoricals])
+
+    def as_lgb_data(self, data):
+        self.features = data.X.columns.tolist()
         self._parse_categoricals()
-        return xgb.Dataset(
+        return lgb.Dataset(
             data.X,
-            data.y
+            data.y,
+            feature_name=self.features,
+            categorical_feature=self.categoricals
         )
 
     def train(self, data):
         '''
-        :param data: a pydens.data.Data instance
+        :param data: a empdens.data.Data instance
         '''
         t0 = time()
         ld = self.as_lgb_data(data)
@@ -45,10 +69,12 @@ class Xgbm(AbstractLearner):
             params=copy.deepcopy(self.params),
             train_set=ld,
             num_boost_round=self.nround,
-            verbose_eval=False
+            verbose_eval=False,
+            feature_name=self.features,
+            categorical_feature=self.categoricals
         )
         tdiff = str(round(time() - t0))
-        self.vp('Xgboost training took ' + tdiff + ' seconds')
+        self.vp('LightGBM training took ' + tdiff + ' seconds')
 
     def predict(self, X):
         return self.bst.predict(X)
