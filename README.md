@@ -1,8 +1,8 @@
 # empdens, empirical density estimation in python
 
-**empdens** provides a unified interface to several density estimation packages, 
-including an implementation of 
-[classifier-adjusted density 
+**empdens** provides a unified interface to several density estimation packages,
+including an implementation of
+[classifier-adjusted density
 estimation](https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf).
 Examples include
 - [Basic usage and testing](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/demo.ipynb)
@@ -14,20 +14,20 @@ Applications of density estimation include
 depends on the similarity between the new point and the training data. A
 density function trained on the training data can serve as a warning of data drift
 if the evaluated density at the new point is exceptionally low. One way to focus such an
-analysis is to train and evaluate the density using only several of the most-important 
+analysis is to train and evaluate the density using only several of the most-important
 features in the model.
 - **Mode detection**: Locating regions of high density is a first step to efficiently
 allocate resources to address an epidemic, market a product, etc.
-- **Feature engineering**: The density at a point with respect to any 
-subset of the dimensions of a feature space can encode useful information. 
-- **Anomaly/novelty/outlier detection**: A "point of low density" 
-is a common working definition of "anomaly", although it's not the only one. 
+- **Feature engineering**: The density at a point with respect to any
+subset of the dimensions of a feature space can encode useful information.
+- **Anomaly/novelty/outlier detection**: A "point of low density"
+is a common working definition of "anomaly", although it's not the only one.
 (In astrostatistics, for example,
  a density spike may draw attention as a possible galaxy.)
 
-Evaluating the performance of a density estimator is not straightforward. We rely on a 
-mix of simulation, real-data sanity checks, and cross-validation in special cases, 
-as detailed in our 
+Evaluating the performance of a density estimator is not straightforward. We rely on a
+mix of simulation, real-data sanity checks, and cross-validation in special cases,
+as detailed in our
 [evaluation guide](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/performance_metrics.ipynb).
 
 
@@ -35,13 +35,26 @@ as detailed in our
 
 TODO pypi
 
+## Development environment
+
+Create and activate a virtual env for dev ops:
+```
+git clone git@github.com:zkurtz/empdens.git
+cd empdens
+pip install uv
+uv sync
+source .venv/bin/activate
+pre-commit install
+```
+
+
 ## Related work
 
-- [A case has been made](https://github.com/Microsoft/LightGBM/issues/2056) for 
+- [A case has been made](https://github.com/Microsoft/LightGBM/issues/2056) for
 extending boosted trees to include density estimation. See also
-[Liu and Wong (2014)](https://arxiv.org/pdf/1401.2597.pdf) and 
+[Liu and Wong (2014)](https://arxiv.org/pdf/1401.2597.pdf) and
 [Li, Yang, Wong (2016)](http://papers.nips.cc/paper/6217-density-estimation-via-discrepancy-based-adaptive-sequential-partition.pdf)
-- [A review of density estimation packages in R](https://vita.had.co.nz/papers/density-estimation.pdf) 
+- [A review of density estimation packages in R](https://vita.had.co.nz/papers/density-estimation.pdf)
 appears not to find any approach that can handle more than 6 features
 - A 'nearest neighbors' [fastkde](https://github.com/mjenrungrot/fastKDE)
 - [Random forests](https://github.com/ksanjeevan/randomforest-density-python)
@@ -59,12 +72,12 @@ Tutorials, starting with
 - how CADE works
 - density estimation trees
 
-Density estimation: 
+Density estimation:
 - Implement a dimensionality-reduction pre-processing method. Extreme multicolinearly
 is a potential failure mode in CADE because the classifier can trivially distinguish
 fake data from real since the fake data model assumes feature independence.
-- Merge the best of the tree-based methods of LightGBM, 
+- Merge the best of the tree-based methods of LightGBM,
 [detpack](https://cran.r-project.org/web/packages/detpack/index.html),
 [Schmidberger and Frank](https://link.springer.com/content/pdf/10.1007/11564126_26.pdf),
-and 
+and
 [astropy.stats.bayesian_blocks](http://docs.astropy.org/en/stable/api/astropy.stats.bayesian_blocks.html).

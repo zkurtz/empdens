@@ -1,0 +1,29 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-added-large-files
+- repo: local
+  hooks:
+    - id: pyright
+      name: type checking (pyright)
+      entry: pyright
+      language: system
+      types: [python]
+    - id: ruff-format
+      name: formatting (ruff)
+      entry: ruff
+      language: system
+      types: [python]
+      args: ['format']
+    - id: ruff-lint
+      name: linting (ruff)
+      entry: ruff
+      language: system
+      types: [python]
+      args: ['check', '--fix', '--force-exclude']
+
+exclude: ^(docs/)
