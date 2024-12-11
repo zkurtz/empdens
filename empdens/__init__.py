@@ -3,6 +3,7 @@ from . import classifiers
 from . import evaluation
 from . import models
 from . import simulators
+from . import tree
 from . import wrappers
 
 from .data import load_SHAP_census_data

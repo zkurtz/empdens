@@ -2,17 +2,17 @@ import pytest
 
 @pytest.mark.filterwarnings("ignore:numpy.ufunc size changed")
 def test_cade_default():
-    from pydens.cade import Cade
+    from empdens.cade import Cade
     x = Cade()
     assert x is not None
 
 def test_cade():
     import numpy as np
 
-    from pydens.cade import Cade
-    from pydens.models import JointDensity
-    from pydens.classifiers.lightgbm import Lgbm
-    from pydens import simulators
+    from empdens.cade import Cade
+    from empdens.models import JointDensity
+    from empdens.classifiers.lightgbm import Lgbm
+    from empdens import simulators
 
     # Compile a Cade class with all defaults
     np.random.seed(0)
