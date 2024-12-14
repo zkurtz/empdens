@@ -1,2 +1,2 @@
-from .bivariate import Zena
-from .univariate import BartSimpson
+from empdens.simulators.bivariate import Zena
+from empdens.simulators.univariate import BartSimpson

@@ -186,7 +186,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.0.3" },
     { name = "pandas", specifier = ">=0.24.2" },
     { name = "scikit-learn", specifier = ">=0.20.3" },
-    { name = "shmistogram", git = "https://github.com/zkurtz/shmistogram.git" },
+    { name = "shmistogram", specifier = ">=0.3.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -886,16 +886,17 @@ wheels = [
 
 [[package]]
 name = "shmistogram"
-version = "0.2.4"
-source = { git = "https://github.com/zkurtz/shmistogram.git#e4adf28a97dbb05b58f6ac08e62fd12c70319901" }
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
     { name = "matplotlib" },
-    { name = "numpy" },
     { name = "pandas" },
-    { name = "pytz" },
     { name = "scipy" },
-    { name = "six" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/02/e0/3d3d274938a994d5be0e807a24ef3b6b3fb06e3f2c4b163e2cf555d16e97/shmistogram-0.3.1.tar.gz", hash = "sha256:b2a5f70793ead43ebdf3d23fa413cd2ea8c716e9c1152dca202b4e63d999430c", size = 5613 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/38/bc/3cde6e505a37d07b5daf468f1a8e909b03d8bee61876a4352a0c3478c556/shmistogram-0.3.1-py3-none-any.whl", hash = "sha256:cca842b263057bbf1801d250507142e1ddacd944114050920714ecf0a3905b83", size = 4844 },
 ]
 
 [[package]]

@@ -10,7 +10,7 @@ dependencies = [
     "matplotlib >=3.0.3",
     "pandas >=0.24.2",
     "scikit-learn >=0.20.3",
-    "shmistogram",
+    "shmistogram >=0.3.1",
 ]
 
 [dependency-groups]
@@ -21,19 +21,11 @@ dev = [
   "pytest >=8.3.2",
 ]
 
-[tool.uv.sources]
-shmistogram = { git = "https://github.com/zkurtz/shmistogram.git" }
-
 [tool.setuptools]
 py-modules = ["empdens"]
 
 [tool.uv]
 package = true
-
-[tool.uv.files]
-files = [
-    "empdens/resources/data/japanese_vowels.csv",
-]
 
 [tool.pytest.ini_options]
 testpaths = ["tests",]

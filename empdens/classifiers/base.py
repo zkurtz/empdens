@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 
+
 class AbstractLearner(ABC):
     def __init__(self, params=None, verbose=False):
         self.params = self.default_params()
         if params is not None:
             self.params.update(copy.deepcopy(params))
-        self.verbose=verbose
+        self.verbose = verbose
 
     @abstractmethod
     def default_params(self):

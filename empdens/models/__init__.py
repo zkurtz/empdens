@@ -1,2 +1,1 @@
-from .joint import JointDensity
-
+from empdens.models.joint import JointDensity
