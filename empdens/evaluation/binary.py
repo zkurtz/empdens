@@ -3,7 +3,7 @@ from sklearn import metrics
 
 
 class Binary(object):
-    """A collection of metrics for the strength of association between two vectors in [0,1]"""
+    """A collection of metrics for the strength of association between two vectors in [0,1]."""
 
     def __init__(self, truth, pred):
         assert len(truth) == len(pred)
@@ -18,5 +18,5 @@ class Binary(object):
         }
 
     def AUROC(self):
-        """Area under the receiver-operator characteristic curve"""
+        """Area under the receiver-operator characteristic curve."""
         return metrics.roc_auc_score(y_true=self.truth, y_score=self.pred)

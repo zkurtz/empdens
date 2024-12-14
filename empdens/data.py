@@ -3,7 +3,7 @@ import pkg_resources
 
 
 class CadeData(object):
-    """A standardized data format for empdens.cade.Cade"""
+    """A standardized data format for empdens.cade.Cade."""
 
     def __init__(self, X, y):
         assert isinstance(X, pd.DataFrame)
@@ -14,14 +14,14 @@ class CadeData(object):
 
 
 def load_Japanese_vowels_data():
-    """Data downloaded from http://odds.cs.stonybrook.edu/japanese-vowels-data/"""
+    """Data downloaded from http://odds.cs.stonybrook.edu/japanese-vowels-data/."""
     DATA_PATH = pkg_resources.resource_filename("empdens", "resources/data/japanese_vowels.csv")
     return pd.read_csv(DATA_PATH)
 
 
 def load_SHAP_census_data():
     """This loads the 'adults' dataset cached in SHAP, borrowing a few SHAP
-    file parsing code snippets, https://github.com/slundberg/shap/blob/master/shap/datasets.py
+    file parsing code snippets, https://github.com/slundberg/shap/blob/master/shap/datasets.py.
     """
     try:
         pass

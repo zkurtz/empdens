@@ -1,13 +1,12 @@
-
 import numpy as np
 import pandas as pd
 from sklearn import metrics
 
-from . import models
-from .base import AbstractDensity
-from .classifiers.base import AbstractLearner
-from .classifiers.lightgbm import Lgbm
-from .data import CadeData
+from empdens import models
+from empdens.base import AbstractDensity
+from empdens.classifiers.base import AbstractLearner
+from empdens.classifiers.lightgbm import Lgbm
+from empdens.data import CadeData
 
 
 def auc(df):
@@ -16,7 +15,7 @@ def auc(df):
 
 
 class Cade(AbstractDensity):
-    """Classifier-adjusted density estimation
+    """Classifier-adjusted density estimation.
 
     Based on https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 
@@ -40,7 +39,7 @@ class Cade(AbstractDensity):
         self.verbose = verbose
 
     def compute_simulation_size(self, df):
-        """Determine the number of synthetic data samples to simulate
+        """Determine the number of synthetic data samples to simulate.
 
         If self.sim_size is 'auto', sets the simulation size as the geometric mean
         between the data size and self.simulation_size_attractor
@@ -82,7 +81,7 @@ class Cade(AbstractDensity):
             raise Exception("the data column names need to be strings, not " + str(type(df.columns[0])))
 
     def train(self, df, diagnostics=False):
-        """Model the density of the data
+        """Model the density of the data.
 
         :param df: (pandas DataFrame)
         """
@@ -106,7 +105,7 @@ class Cade(AbstractDensity):
             print("In-sample, the classifier had AUROC = " + AUROC)
 
     def density(self, X):
-        """Predict the density at new points
+        """Predict the density at new points.
 
         Apply equation 2.1 in https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 

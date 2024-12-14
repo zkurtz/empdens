@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 class Multinomial:
     def __init__(self, probs):
-        """Define a multinomial random variable object
+        """Define a multinomial random variable object.
 
         :param probs: The probability of each class, with classes indexed as 0 to len(probs)-1
         """
@@ -27,7 +27,7 @@ class Multinomial:
 
 class BartSimpson(AbstractDensity):
     """The "claw" in https://projecteuclid.org/download/pdf_1/euclid.aos/1176348653;
-    renamed as in http://www.stat.cmu.edu/~larry/=sml/densityestimation.pdf
+    renamed as in http://www.stat.cmu.edu/~larry/=sml/densityestimation.pdf.
     """
 
     def __init__(self):
@@ -45,7 +45,7 @@ class BartSimpson(AbstractDensity):
         self.multinomial = Multinomial(probs=np.array([0.5] + [0.1] * 5))
 
     def rvs(self, n):
-        """Simulate n draws"""
+        """Simulate n draws."""
         idxs = self.multinomial.rvs(n)
         values, counts = np.unique(idxs, return_counts=True)
         samples = [self.gaussians[values[k]].rvs(counts[k]) for k in range(len(values))]

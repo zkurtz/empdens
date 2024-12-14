@@ -5,12 +5,12 @@ import pandas as pd
 import shmistogram as shmist
 from scipy import stats
 
-from ..base import AbstractDensity
-from .multinomial import Multinomial
+from empdens.base import AbstractDensity
+from empdens.models.multinomial import Multinomial
 
 
 class PiecewiseUniform(AbstractDensity):
-    """Adaptive-width histogram density estimator
+    """Adaptive-width histogram density estimator.
 
     Uses a shmistogram (https://github.com/zkurtz/shmistogram) to separates data
     into
@@ -62,9 +62,7 @@ class PiecewiseUniform(AbstractDensity):
             )
 
     def train(self, series):
-        """:param series: pandas series of numeric values
-
-        """
+        """:param series: pandas series of numeric values"""
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares
         # Loners
@@ -78,8 +76,7 @@ class PiecewiseUniform(AbstractDensity):
         self.oos_density = min(mmin, self.crowd_lookup.density.min(), 1 / shm.n_obs) / 2
 
     def density(self, x):
-        """Compute the density function on each row of x
-        """
+        """Compute the density function on each row of x."""
         # Identify the unique values for which densities are needed
         ref = pd.DataFrame({"xval": x.unique()})
         if self.multinomial is not None:

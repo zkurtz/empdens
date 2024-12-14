@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 class Zena(AbstractDensity):
-    """Zena (arbitrary name) -- a bivariate data simulator"""
+    """Zena (arbitrary name) -- a bivariate data simulator."""
 
     def __init__(self):
         super().__init__()
@@ -14,7 +14,7 @@ class Zena(AbstractDensity):
         self.triang = stats.triang(0, 0, 3)
 
     def rvs(self, n):
-        """Simulate a simple bivariate density
+        """Simulate a simple bivariate density.
 
         The density is 2-dimensional with a discontinuous covariance structure
         """

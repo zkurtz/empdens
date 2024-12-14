@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 from shmistogram.tabulation import SeriesTable
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 class Multinomial(AbstractDensity):
-    """Model a single categorical feature"""
+    """Model a single categorical feature."""
 
     def _density(self):
         reg_counts = self.df.n_obs.values + 1
@@ -49,7 +49,7 @@ class Multinomial(AbstractDensity):
         self._density()
 
     def density(self, x):
-        """Compute the density for an individual value"""
+        """Compute the density for an individual value."""
         try:
             return self.df.density[x]
         except:
@@ -57,7 +57,7 @@ class Multinomial(AbstractDensity):
             return self.out_of_sample_dens
 
     def density_series(self, x):
-        """Fast density computation for a list of values
+        """Fast density computation for a list of values.
 
         :param x: (pandas.Series) Values at which to compute the density
         """

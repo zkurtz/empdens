@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 def defaults():
@@ -16,8 +16,7 @@ class SklearnIsolationForest(AbstractDensity):
             self.params.update(params)
 
     def train(self, data):
-        """:param data: (pandas.DataFrame) of numeric features
-        """
+        """:param data: (pandas.DataFrame) of numeric features"""
         assert isinstance(data, pd.DataFrame)
         self.forest = IsolationForest(**self.params)
         _ = self.forest.fit(data.values)

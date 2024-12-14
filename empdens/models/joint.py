@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from ..base import AbstractDensity
-from .multinomial import Multinomial
-from .piecewise_uniform import PiecewiseUniform
+from empdens.base import AbstractDensity
+from empdens.models.multinomial import Multinomial
+from empdens.models.piecewise_uniform import PiecewiseUniform
 
 
 class JointDensity(AbstractDensity):
@@ -57,7 +57,7 @@ class JointDensity(AbstractDensity):
         return np.exp(log_dens)
 
     def rvs(self, n):
-        """Generate n samples from the fitted distribution"""
+        """Generate n samples from the fitted distribution."""
         if not hasattr(self, "univariates"):
             raise Exception("Call `train` before you call `rvs`")
         samples = {v: self.univariates[v].rvs(n) for v in self.columns}

@@ -15,7 +15,7 @@ with warnings.catch_warnings():
     except:
         pass
 
-from .base import AbstractLearner
+from empdens.classifiers.base import AbstractLearner
 
 
 def assert_lightgbm_installed():
@@ -58,8 +58,7 @@ class Lgbm(AbstractLearner):
         return lgb.Dataset(data.X, data.y, feature_name=self.features, categorical_feature=self.categoricals)
 
     def train(self, data):
-        """:param data: a empdens.data.Data instance
-        """
+        """:param data: a empdens.data.Data instance"""
         t0 = time()
         ld = self.as_lgb_data(data)
         self.bst = lgb.train(
@@ -77,7 +76,7 @@ class Lgbm(AbstractLearner):
         return self.bst.predict(X)
 
     def freeze(self):
-        """Attach self.bst as a binary attribute
+        """Attach self.bst as a binary attribute.
 
         This is necessary to be able to preserve by-reference internals during a
         serialization-unserialization cycle
@@ -90,7 +89,7 @@ class Lgbm(AbstractLearner):
         os.remove(filename)
 
     def thaw(self):
-        """Unserialize self.bst_binary"""
+        """Unserialize self.bst_binary."""
         assert hasattr(self, "bst_binary")
         assert self.bst_binary is not None
         self.bst = pickle.loads(self.bst_binary)

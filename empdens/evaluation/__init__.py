@@ -1,2 +1,2 @@
-from .binary import Binary
-from .evaluate import Evaluation
+from empdens.evaluation.binary import Binary
+from empdens.evaluation.evaluate import Evaluation

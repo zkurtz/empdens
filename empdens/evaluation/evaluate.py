@@ -23,7 +23,7 @@ class Evaluation(object):
             raise Exception("rank-order correlation can't be computed since you did not provide anything for `truth`")
 
     def rank_order_correlation(self, pred):
-        """Spearman (i.e. rank-order) correlation of prediction against truth
+        """Spearman (i.e. rank-order) correlation of prediction against truth.
 
         Maximize me
         """
@@ -33,7 +33,7 @@ class Evaluation(object):
         return s_pred.corr(t_pred, method="spearman")
 
     def pearson_correlation(self, pred):
-        """Spearman (i.e. rank-order) correlation of prediction against truth
+        """Spearman (i.e. rank-order) correlation of prediction against truth.
 
         Maximize me
         """
@@ -43,18 +43,18 @@ class Evaluation(object):
         return s_pred.corr(t_pred)
 
     def mean_absolute_error(self, pred):
-        """Direct estimate of expectation of L1 loss"""
+        """Direct estimate of expectation of L1 loss."""
         self._assert_truth_available()
         return np.absolute(pred - self.truth).mean()
 
     def mean_squared_error(self, pred):
-        """Direct estimate of expectation of L2 loss"""
+        """Direct estimate of expectation of L2 loss."""
         self._assert_truth_available()
         squared_errors = (pred - self.truth) ** 2
         return squared_errors.mean()
 
     def mean_density(self, pred):
-        """The mean density; this is exp(-deviance)
+        """The mean density; this is exp(-deviance).
 
         This is a sensible metric for some (but not all) density estimators
         """

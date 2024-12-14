@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy import interpolate
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 def defaults():
@@ -63,7 +63,7 @@ class FastKDE(AbstractDensity):
     def train(self, data):
         """Currently throws a warning:
             https://bitbucket.org/lbl-cascade/fastkde/issues/5/using-a-non-tuple-sequence-for
-        :param data: (pandas.DataFrame) of numeric features
+        :param data: (pandas.DataFrame) of numeric features.
         """
         assert isinstance(data, pd.DataFrame)
         with warnings.catch_warnings():

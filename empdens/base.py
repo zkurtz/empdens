@@ -7,7 +7,7 @@ class AbstractDensity(ABC):
     """A class of method associated with a density. 'density' is the only
     mandatory method, but this includes placeholders for several
     closely-related methods that often would expected in uses cases
-    involving densities
+    involving densities.
 
     Conceptually 'pdf' and 'density' are the same thing, but they differ
     in usage: pdf accepts a single 1-d vector representing a single point,
@@ -20,26 +20,26 @@ class AbstractDensity(ABC):
         self.predict = self.density
 
     def train(self, data):
-        """A method for defining or updating the self.density function base on data"""
+        """A method for defining or updating the self.density function base on data."""
         raise Exception("Not yet implemented")
 
     @abstractmethod
     def density(self, X):
         """Return the density for each row of the pandas DataFrame X
-        as a numpy array
+        as a numpy array.
         """
         raise Exception("Not yet implemented")
 
     def rvs(self, n):
-        """Returns n samples from the space"""
+        """Returns n samples from the space."""
         raise Exception("Not yet implemented")
 
     def pdf(self, X):
-        """Evaluate the density function at a single point"""
+        """Evaluate the density function at a single point."""
         raise Exception("Single-point evaluation not yet supported, but see self.density")
 
     def vp(self, string):
-        """A print function that respects self.verbose"""
+        """A print function that respects self.verbose."""
         if self.verbose:
             print(string)
 

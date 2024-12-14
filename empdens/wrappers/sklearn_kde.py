@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import KernelDensity
 
-from ..base import AbstractDensity
+from empdens.base import AbstractDensity
 
 
 def defaults():
@@ -17,8 +17,7 @@ class SklearnKDE(AbstractDensity):
             self.params.update(params)
 
     def train(self, data):
-        """:param data: (pandas.DataFrame) of numeric features
-        """
+        """:param data: (pandas.DataFrame) of numeric features"""
         assert isinstance(data, pd.DataFrame)
         self.kde = KernelDensity(**self.params)
         _ = self.kde.fit(data.values)
