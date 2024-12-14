@@ -1,35 +1,33 @@
+
 import numpy as np
 import pandas as pd
-import pdb
 from sklearn import metrics
 
-from .classifiers.lightgbm import Lgbm
-from .classifiers.base import AbstractLearner
-from .data import CadeData
 from . import models
 from .base import AbstractDensity
+from .classifiers.base import AbstractLearner
+from .classifiers.lightgbm import Lgbm
+from .data import CadeData
+
 
 def auc(df):
     fpr, tpr, _ = metrics.roc_curve(df.truth.values, df.pred.values, pos_label=1)
     return metrics.auc(fpr, tpr)
 
+
 class Cade(AbstractDensity):
-    ''' Classifier-adjusted density estimation
+    """Classifier-adjusted density estimation
 
     Based on https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 
     :param initial_density:
     :param sim_size:
-    '''
+    """
 
     # A soft target for the number of instances to simulate when `sim_size` is "auto"
     simulation_size_attractor = 10000
 
-    def __init__(self,
-            initial_density=None,
-            classifier=Lgbm(),
-            sim_size='auto',
-            verbose=False):
+    def __init__(self, initial_density=None, classifier=Lgbm(), sim_size="auto", verbose=False):
         super().__init__()
         if initial_density is None:
             self.initial_density = models.JointDensity()
@@ -42,7 +40,7 @@ class Cade(AbstractDensity):
         self.verbose = verbose
 
     def compute_simulation_size(self, df):
-        ''' Determine the number of synthetic data samples to simulate
+        """Determine the number of synthetic data samples to simulate
 
         If self.sim_size is 'auto', sets the simulation size as the geometric mean
         between the data size and self.simulation_size_attractor
@@ -51,14 +49,14 @@ class Cade(AbstractDensity):
         round(self.sim_size)*df.shape[0]
 
         Finally, if self.sim_size >= 100, simulation size is round(self.sim_size)
-        '''
+        """
         n_real = df.shape[0]
         if isinstance(self.sim_size, str):
-            assert self.sim_size=='auto'
-            sim_n = np.sqrt(n_real*self.simulation_size_attractor)
+            assert self.sim_size == "auto"
+            sim_n = np.sqrt(n_real * self.simulation_size_attractor)
         elif self.sim_size < 100:
             assert self.sim_size > 0
-            sim_n = round(self.sim_size*n_real)
+            sim_n = round(self.sim_size * n_real)
             if sim_n < 10:
                 raise Exception("Simulation size is very small. Consider using a larger value of sim_size")
         else:
@@ -67,13 +65,10 @@ class Cade(AbstractDensity):
         return int(sim_n)
 
     def _diagnostics(self, x, truth):
-        val_df = pd.DataFrame({
-            'pred': self.classifier.predict(x),
-            'truth': truth
-        })
+        val_df = pd.DataFrame({"pred": self.classifier.predict(x), "truth": truth})
         self.diagnostics = {
-            'val_df': val_df,
-            'auc': auc(val_df),
+            "val_df": val_df,
+            "auc": auc(val_df),
         }
 
     def _validate_data(self, data):
@@ -87,44 +82,42 @@ class Cade(AbstractDensity):
             raise Exception("the data column names need to be strings, not " + str(type(df.columns[0])))
 
     def train(self, df, diagnostics=False):
-        ''' Model the density of the data
+        """Model the density of the data
 
         :param df: (pandas DataFrame)
-        '''
+        """
         self._validate_data(df)
-        self.vp('Training a generative density model on '
-                + str(df.shape[0]) + ' samples')
+        self.vp("Training a generative density model on " + str(df.shape[0]) + " samples")
         self.initial_density.train(df)
         sim_n = self.compute_simulation_size(df)
-        self.vp('Simulating ' + str(sim_n) +
-                ' fake samples from the model and join it with the real data')
+        self.vp("Simulating " + str(sim_n) + " fake samples from the model and join it with the real data")
         partially_synthetic_data = CadeData(
             X=pd.concat([df, self.initial_density.rvs(sim_n)]),
-            y=np.concatenate([np.ones(df.shape[0]), np.zeros(sim_n)])
+            y=np.concatenate([np.ones(df.shape[0]), np.zeros(sim_n)]),
         )
-        self.vp('Train the classifier to distinguish real from fake')
+        self.vp("Train the classifier to distinguish real from fake")
         self.classifier.train(partially_synthetic_data)
         if diagnostics:
             self._diagnostics(partially_synthetic_data.X, partially_synthetic_data.y)
         if self.verbose:
-            if not hasattr(self, 'diagnostics'):
+            if not hasattr(self, "diagnostics"):
                 self._diagnostics(partially_synthetic_data.X, partially_synthetic_data.y)
-            AUROC = str(round(self.diagnostics['auc'], 3))
+            AUROC = str(round(self.diagnostics["auc"], 3))
             print("In-sample, the classifier had AUROC = " + AUROC)
 
     def density(self, X):
-        ''' Predict the density at new points
+        """Predict the density at new points
 
         Apply equation 2.1 in https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 
         :param X: (pd.DataFrame or numpy array) Must match the exact column order of the `df`
             argument that was passed to self.train
-        '''
+        """
         self._validate_data(X)
         # Initial density estimate
         synthetic_dens = self.initial_density.density(X)
         # Classifier adjustment factor
         p_real = self.classifier.predict(X)
-        odds_real = p_real/(1 - p_real)
-        classifier_adjustment=self.sim_rate*odds_real
-        return synthetic_dens*classifier_adjustment
+        odds_real = p_real / (1 - p_real)
+        classifier_adjustment = self.sim_rate * odds_real
+        return synthetic_dens * classifier_adjustment

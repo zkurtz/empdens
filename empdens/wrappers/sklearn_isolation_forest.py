@@ -1,14 +1,12 @@
-import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 
 from ..base import AbstractDensity
 
+
 def defaults():
-    return {
-        'behaviour': "new",
-        'contamination': "auto"
-    }
+    return {"behaviour": "new", "contamination": "auto"}
+
 
 class SklearnIsolationForest(AbstractDensity):
     def __init__(self, params=None):
@@ -18,9 +16,8 @@ class SklearnIsolationForest(AbstractDensity):
             self.params.update(params)
 
     def train(self, data):
-        '''
-        :param data: (pandas.DataFrame) of numeric features
-        '''
+        """:param data: (pandas.DataFrame) of numeric features
+        """
         assert isinstance(data, pd.DataFrame)
         self.forest = IsolationForest(**self.params)
         _ = self.forest.fit(data.values)

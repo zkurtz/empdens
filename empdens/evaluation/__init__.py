@@ -1,2 +1,2 @@
-from .evaluate import Evaluation
 from .binary import Binary
+from .evaluate import Evaluation
