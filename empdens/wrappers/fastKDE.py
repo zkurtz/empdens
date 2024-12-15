@@ -57,7 +57,7 @@ class FastKDE(AbstractDensity):
                 (1) `pip install cython`
                 (2) `pip install numpy`
                 (3) `pip install git+https://bitbucket.org/lbl-cascade/fastkde.git#egg=fastkde`
-            """)
+            """) from err
         self.fastKDE = fastKDE
 
     def train(self, data):
@@ -69,11 +69,11 @@ class FastKDE(AbstractDensity):
         with warnings.catch_warnings():
             msg = "Using a non-tuple sequence for multidimensional indexing is deprecated"
             warnings.filterwarnings("ignore", message=msg)
-            grid, axes = self.fastKDE.pdf(*[data[col].values for col in data.columns], **self.params)
-        if not isinstance(axes, list):  # then probably this is 1-D estimation
-            axes = [axes]
+            fkde = self.fastKDE.pdf(*[data[col].to_numpy() for col in data], **self.params)
+            grid = fkde.data
+            axes = [getattr(fkde, dim_name).to_numpy() for dim_name in fkde.dims]
         self.interpolator = Interpolator(grid, axes)
 
     def density(self, data):
         assert isinstance(data, pd.DataFrame)
-        return self.interpolator.interpolate(data.values)
+        return self.interpolator.interpolate(data.to_numpy())

@@ -5,7 +5,7 @@ from empdens.base import AbstractDensity
 
 
 def defaults():
-    return {"behaviour": "new", "contamination": "auto"}
+    return {"contamination": "auto"}
 
 
 class SklearnIsolationForest(AbstractDensity):

@@ -5,9 +5,9 @@ including an implementation of
 [classifier-adjusted density
 estimation](https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf).
 Examples include
-- [Basic usage and testing](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/demo.ipynb)
-- [Identifying the common and the rare in Census data](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/census_demographics.ipynb)
-- [Modest performance on an anomaly detection benchmark](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/vowels.ipynb)
+- [Basic usage and testing](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/main/notebooks/demo.ipynb)
+- [Identifying the common and the rare in Census data](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/main/notebooks/census_demographics.ipynb)
+- [Modest performance on an anomaly detection benchmark](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/main/notebooks/vowels.ipynb)
 
 Applications of density estimation include
 - **Detecting data drift**: The reliability of a trained model's prediction at a new data point
@@ -28,7 +28,7 @@ is a common working definition of "anomaly", although it's not the only one.
 Evaluating the performance of a density estimator is not straightforward. We rely on a
 mix of simulation, real-data sanity checks, and cross-validation in special cases,
 as detailed in our
-[evaluation guide](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/master/notebooks/performance_metrics.ipynb).
+[evaluation guide](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/main/notebooks/performance_metrics.ipynb).
 
 
 ## Installation
