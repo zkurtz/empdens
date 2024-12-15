@@ -3,6 +3,7 @@ import pdb
 import numpy as np
 import pandas as pd
 import shmistogram as shmist
+from shmistogram.binners.bayesblocks import BayesianBlocks
 from scipy import stats
 
 from empdens.base import AbstractDensity
@@ -23,7 +24,7 @@ class PiecewiseUniform(AbstractDensity):
         self.alpha = alpha
         self.loner_min_count = loner_min_count
         if binner is None:
-            self.binner = shmist.binners.BayesianBlocks({"sample_size": 10000})
+            self.binner = BayesianBlocks({"sample_size": 10000})
         self.verbose = verbose
 
     def _uniform(self, bin):

@@ -65,7 +65,6 @@ class Lgbm(AbstractLearner):
             params=copy.deepcopy(self.params),
             train_set=ld,
             num_boost_round=self.nround,
-            verbose_eval=False,
             feature_name=self.features,
             categorical_feature=self.categoricals,
         )

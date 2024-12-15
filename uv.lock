@@ -192,7 +192,9 @@ dependencies = [
     { name = "lightgbm" },
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "psutil" },
     { name = "scikit-learn" },
+    { name = "setuptools" },
     { name = "shmistogram" },
 ]
 
@@ -211,8 +213,10 @@ requires-dist = [
     { name = "lightgbm", specifier = ">=2.2.3" },
     { name = "matplotlib", specifier = ">=3.0.3" },
     { name = "pandas", specifier = ">=0.24.2" },
+    { name = "psutil", specifier = ">=6.1.0" },
     { name = "scikit-learn", specifier = ">=0.20.3" },
-    { name = "shmistogram", specifier = ">=0.3.1" },
+    { name = "setuptools", specifier = ">=75.6.0" },
+    { name = "shmistogram", specifier = ">=0.4.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -702,6 +706,21 @@ wheels = [
 ]
 
 [[package]]
+name = "psutil"
+version = "6.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/26/10/2a30b13c61e7cf937f4adf90710776b7918ed0a9c434e2c38224732af310/psutil-6.1.0.tar.gz", hash = "sha256:353815f59a7f64cdaca1c0307ee13558a0512f6db064e92fe833784f08539c7a", size = 508565 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/01/9e/8be43078a171381953cfee33c07c0d628594b5dbfc5157847b85022c2c1b/psutil-6.1.0-cp36-abi3-macosx_10_9_x86_64.whl", hash = "sha256:6e2dcd475ce8b80522e51d923d10c7871e45f20918e027ab682f94f1c6351688", size = 247762 },
+    { url = "https://files.pythonhosted.org/packages/1d/cb/313e80644ea407f04f6602a9e23096540d9dc1878755f3952ea8d3d104be/psutil-6.1.0-cp36-abi3-macosx_11_0_arm64.whl", hash = "sha256:0895b8414afafc526712c498bd9de2b063deaac4021a3b3c34566283464aff8e", size = 248777 },
+    { url = "https://files.pythonhosted.org/packages/65/8e/bcbe2025c587b5d703369b6a75b65d41d1367553da6e3f788aff91eaf5bd/psutil-6.1.0-cp36-abi3-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:9dcbfce5d89f1d1f2546a2090f4fcf87c7f669d1d90aacb7d7582addece9fb38", size = 284259 },
+    { url = "https://files.pythonhosted.org/packages/58/4d/8245e6f76a93c98aab285a43ea71ff1b171bcd90c9d238bf81f7021fb233/psutil-6.1.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:498c6979f9c6637ebc3a73b3f87f9eb1ec24e1ce53a7c5173b8508981614a90b", size = 287255 },
+    { url = "https://files.pythonhosted.org/packages/27/c2/d034856ac47e3b3cdfa9720d0e113902e615f4190d5d1bdb8df4b2015fb2/psutil-6.1.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d905186d647b16755a800e7263d43df08b790d709d575105d419f8b6ef65423a", size = 288804 },
+    { url = "https://files.pythonhosted.org/packages/ea/55/5389ed243c878725feffc0d6a3bc5ef6764312b6fc7c081faaa2cfa7ef37/psutil-6.1.0-cp37-abi3-win32.whl", hash = "sha256:1ad45a1f5d0b608253b11508f80940985d1d0c8f6111b5cb637533a0e6ddc13e", size = 250386 },
+    { url = "https://files.pythonhosted.org/packages/11/91/87fa6f060e649b1e1a7b19a4f5869709fbf750b7c8c262ee776ec32f3028/psutil-6.1.0-cp37-abi3-win_amd64.whl", hash = "sha256:a8fb3752b491d246034fa4d279ff076501588ce8cbcdbb62c32fd7a377d996be", size = 254228 },
+]
+
+[[package]]
 name = "pyerfa"
 version = "2.0.1.5"
 source = { registry = "https://pypi.org/simple" }
@@ -930,8 +949,17 @@ wheels = [
 ]
 
 [[package]]
+name = "setuptools"
+version = "75.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/54/292f26c208734e9a7f067aea4a7e282c080750c4546559b58e2e45413ca0/setuptools-75.6.0.tar.gz", hash = "sha256:8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6", size = 1337429 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/55/21/47d163f615df1d30c094f6c8bbb353619274edccf0327b185cc2493c2c33/setuptools-75.6.0-py3-none-any.whl", hash = "sha256:ce74b49e8f7110f9bf04883b730f4765b774ef3ef28f722cce7c273d253aaf7d", size = 1224032 },
+]
+
+[[package]]
 name = "shmistogram"
-version = "0.3.1"
+version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
@@ -939,9 +967,9 @@ dependencies = [
     { name = "pandas" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/02/e0/3d3d274938a994d5be0e807a24ef3b6b3fb06e3f2c4b163e2cf555d16e97/shmistogram-0.3.1.tar.gz", hash = "sha256:b2a5f70793ead43ebdf3d23fa413cd2ea8c716e9c1152dca202b4e63d999430c", size = 5613 }
+sdist = { url = "https://files.pythonhosted.org/packages/bc/36/503e84858e321804906449553aa6cedad2eec12bbf0b069408a2c878a230/shmistogram-0.4.1.tar.gz", hash = "sha256:d18f22d29b0d42634b7cf7a2ce71759ab44623250f5b6ad2f0c12aa33b087547", size = 19850 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/38/bc/3cde6e505a37d07b5daf468f1a8e909b03d8bee61876a4352a0c3478c556/shmistogram-0.3.1-py3-none-any.whl", hash = "sha256:cca842b263057bbf1801d250507142e1ddacd944114050920714ecf0a3905b83", size = 4844 },
+    { url = "https://files.pythonhosted.org/packages/7e/1d/d0a9ef702dd8d6101043b5581492a6ecd06fcf2723515121debc97e56010/shmistogram-0.4.1-py3-none-any.whl", hash = "sha256:35b1cc7f56bc5f61be903d71220e7571ea5b36e721ab8c2a8e163ad956522776", size = 20366 },
 ]
 
 [[package]]
