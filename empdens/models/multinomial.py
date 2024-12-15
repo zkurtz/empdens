@@ -52,7 +52,7 @@ class Multinomial(AbstractDensity):
         """Compute the density for an individual value."""
         try:
             return self.df.density[x]
-        except:
+        except Exception as err:
             # assert x not in self.df.index.values
             return self.out_of_sample_dens
 

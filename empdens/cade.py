@@ -1,3 +1,5 @@
+"""Classifier-adjusted density estimation."""
+
 import numpy as np
 import pandas as pd
 from sklearn import metrics
@@ -10,6 +12,7 @@ from empdens.data import CadeData
 
 
 def auc(df):
+    """Compute the area under the ROC curve."""
     fpr, tpr, _ = metrics.roc_curve(df.truth.values, df.pred.values, pos_label=1)
     return metrics.auc(fpr, tpr)
 
@@ -27,6 +30,7 @@ class Cade(AbstractDensity):
     simulation_size_attractor = 10000
 
     def __init__(self, initial_density=None, classifier=Lgbm(), sim_size="auto", verbose=False):
+        """Initialize the classifier-adjusted density estimation model."""
         super().__init__()
         if initial_density is None:
             self.initial_density = models.JointDensity()
@@ -73,12 +77,12 @@ class Cade(AbstractDensity):
     def _validate_data(self, data):
         try:
             assert isinstance(data, pd.DataFrame)
-        except:
+        except Exception:
             raise Exception("the data needs to be a pandas.DataFrame")
         try:
             assert isinstance(data.columns[0], str)
-        except:
-            raise Exception("the data column names need to be strings, not " + str(type(df.columns[0])))
+        except Exception:
+            raise Exception("the data column names need to be strings, not " + str(type(data.columns[0])))
 
     def train(self, df, diagnostics=False):
         """Model the density of the data.
