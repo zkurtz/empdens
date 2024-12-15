@@ -25,7 +25,7 @@ def load_SHAP_census_data():
     """
     try:
         pass
-    except:
+    except Exception as err:
         raise Exception("Do `pip install shap` and try again")
     dtypes = [
         ("Age", "float32"),

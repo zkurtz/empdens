@@ -114,7 +114,7 @@ class PiecewiseUniform(AbstractDensity):
         if n_crowd > 0:
             try:
                 assert self.crowd_multinom is not None
-            except:
+            except Exception as err:
                 pdb.set_trace()
             bins = pd.Series(self.crowd_multinom.rvs(n_crowd)).value_counts()
             crowd_list = [self.crowd_uniforms[k].rvs(bins[k]) for k in bins.index.values]

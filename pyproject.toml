@@ -1,6 +1,6 @@
 [project]
 name = "empdens"
-version = "0.1.0"
+version = "1.0.0"
 description = "Empirical density estimation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -23,9 +23,6 @@ dev = [
   "pytest >=8.3.2",
   "debtcloset>=0.3.0",
 ]
-
-[tool.setuptools]
-py-modules = ["empdens"]
 
 [tool.uv]
 package = true
@@ -59,13 +56,6 @@ exclude = [
 [tool.ruff]
 line-length = 120
 extend-exclude = [
-    "empdens/__init__.py",
-    "empdens/base.py",
-    "empdens/cade.py",
-    "empdens/classifiers/__init__.py",
-    "empdens/classifiers/base.py",
-    "empdens/classifiers/lightgbm.py",
-    "empdens/classifiers/xgboost.py",
     "empdens/data.py",
     "empdens/evaluation/__init__.py",
     "empdens/evaluation/binary.py",

@@ -1,8 +1,8 @@
-import copy
+"""Xgboost wrapper for usage in CADE."""
+
 import os
 import pickle
 import tempfile
-from time import time
 
 import pandas as pd
 import xgboost as xgb
@@ -12,11 +12,15 @@ from empdens.classifiers.base import AbstractLearner
 
 
 class Xgbm(AbstractLearner):
+    """Xgboost wrapper for usage in CADE."""
+
     def __init__(self, params=None, verbose=False):
+        """Initialize Xgboost wrapper for usage in CADE."""
         super().__init__(params, verbose)
         self.nround = self.params.pop("num_boost_round")
 
     def default_params(self):
+        """Return default parameters for Xgboost."""
         return {
             "task": "train",
             "boosting_type": "gbdt",
@@ -29,20 +33,27 @@ class Xgbm(AbstractLearner):
         }
 
     def as_xgb_data(self, data):
+        """Convert data to xgb.DMatrix."""
         self._parse_categoricals()
         return xgb.Dataset(data.X, data.y)
 
     def train(self, data):
-        """:param data: a empdens.data.Data instance"""
-        t0 = time()
-        ld = self.as_lgb_data(data)
-        self.bst = lgb.train(
-            params=copy.deepcopy(self.params), train_set=ld, num_boost_round=self.nround, verbose_eval=False
-        )
-        tdiff = str(round(time() - t0))
-        self.vp("Xgboost training took " + tdiff + " seconds")
+        """Train the model.
+
+        Args:
+            data: a empdens.data.Data instance
+        """
+        # t0 = time()
+        # ld = self.as_lgb_data(data)
+        # self.bst = lgb.train(
+        #     params=copy.deepcopy(self.params), train_set=ld, num_boost_round=self.nround, verbose_eval=False
+        # )
+        # tdiff = str(round(time() - t0))
+        # self.vp("Xgboost training took " + tdiff + " seconds")
+        raise NotImplementedError()
 
     def predict(self, X):
+        """Predict on new data."""
         return self.bst.predict(X)
 
     def freeze(self):
@@ -65,6 +76,7 @@ class Xgbm(AbstractLearner):
         self.bst = pickle.loads(self.bst_binary)
 
     def importance(self):
+        """Return feature importance."""
         return (
             pd.DataFrame({"feature": self.features, "gain": self.bst.feature_importance(importance_type="gain")})
             .sort_values("gain", ascending=False)

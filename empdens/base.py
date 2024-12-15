@@ -1,13 +1,15 @@
+"""The AbstractDensity class, which is the base class."""
+
 from abc import ABC, abstractmethod
 
 import pandas as pd
 
 
 class AbstractDensity(ABC):
-    """A class of method associated with a density. 'density' is the only
-    mandatory method, but this includes placeholders for several
-    closely-related methods that often would expected in uses cases
-    involving densities.
+    """A class of method associated with a density.
+
+    'density' is the only mandatory method, but this includes placeholders for several closely-related methods
+    that often would expected in uses cases involving densities.
 
     Conceptually 'pdf' and 'density' are the same thing, but they differ
     in usage: pdf accepts a single 1-d vector representing a single point,
@@ -15,6 +17,7 @@ class AbstractDensity(ABC):
     """
 
     def __init__(self, verbose=False):
+        """Initialize the AbstractDensity class."""
         self.verbose = verbose
         # Aliases for density:
         self.predict = self.density
@@ -25,9 +28,7 @@ class AbstractDensity(ABC):
 
     @abstractmethod
     def density(self, X):
-        """Return the density for each row of the pandas DataFrame X
-        as a numpy array.
-        """
+        """Return the density for each row of the pandas DataFrame X as a numpy array."""
         raise Exception("Not yet implemented")
 
     def rvs(self, n):
@@ -46,9 +47,9 @@ class AbstractDensity(ABC):
     def _validate_data(self, data):
         try:
             assert isinstance(data, pd.DataFrame)
-        except:
+        except Exception:
             raise Exception("the data needs to be a pandas.DataFrame")
         try:
             assert isinstance(data.columns[0], str)
-        except:
+        except Exception:
             raise Exception("the data column names need to be strings, not " + str(type(data.columns[0])))

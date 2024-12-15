@@ -47,7 +47,7 @@ class FastKDE(AbstractDensity):
     def _load_fastKDE(self):
         try:
             from fastkde import fastKDE
-        except:
+        except Exception as err:
             raise Exception("""
                 You need to install fastKDE first.
                 We recommend installing from source due to

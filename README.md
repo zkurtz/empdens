@@ -33,7 +33,7 @@ as detailed in our
 
 ## Installation
 
-TODO pypi
+We're [on pypi](https://pypi.org/project/empdens/), so `pip install empdens`.
 
 ## Development environment
 
