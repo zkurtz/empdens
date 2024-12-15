@@ -30,7 +30,7 @@ def test_cade():
     df = diagnostics["val_df"]
     assert df.shape[0] == 2 * N
     auc = diagnostics["auc"]
-    assert isinstance(auc, np.float)
+    assert isinstance(auc, float)
     assert auc >= 0
     assert auc <= 1
 
