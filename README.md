@@ -35,17 +35,7 @@ as detailed in our
 
 We're [on pypi](https://pypi.org/project/empdens/), so `pip install empdens`.
 
-## Development environment
-
-Create and activate a virtual env for dev ops:
-```
-git clone git@github.com:zkurtz/empdens.git
-cd empdens
-pip install uv
-uv sync
-source .venv/bin/activate
-pre-commit install
-```
+Consider using the [simplest-possible virtual environment](https://gist.github.com/zkurtz/4c61572b03e667a7596a607706463543) if working directly on this repo.
 
 
 ## Related work

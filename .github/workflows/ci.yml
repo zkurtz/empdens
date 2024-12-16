@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install extras
-      run: uv sync
+      run: uv sync --group extras
 
     - name: Linting check
       run: uv run ruff check
