@@ -60,10 +60,6 @@ exclude = [
 [tool.ruff]
 line-length = 120
 extend-exclude = [
-    "empdens/data.py",
-    "empdens/evaluation/__init__.py",
-    "empdens/evaluation/binary.py",
-    "empdens/evaluation/evaluate.py",
     "empdens/models/__init__.py",
     "empdens/models/joint.py",
     "empdens/models/multinomial.py",

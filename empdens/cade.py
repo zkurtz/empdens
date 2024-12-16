@@ -104,8 +104,10 @@ class Cade(AbstractDensity):
         self.initial_density.train(df)
         sim_n = self.compute_simulation_size(df)
         self.vp("Simulating " + str(sim_n) + " fake samples from the model and join it with the real data")
+        xdf = pd.concat([df, self.initial_density.rvs(sim_n)])
+        assert isinstance(xdf, pd.DataFrame), "CadeData.X requires a pandas DataFrame"
         partially_synthetic_data = CadeData(
-            X=pd.concat([df, self.initial_density.rvs(sim_n)]),
+            X=xdf,
             y=np.concatenate([np.ones(df.shape[0]), np.zeros(sim_n)]),
         )
         self.vp("Train the classifier to distinguish real from fake")

@@ -1,3 +1,6 @@
+"""Data structures."""
+
+import numpy as np
 import pandas as pd
 import pkg_resources
 
@@ -5,8 +8,13 @@ import pkg_resources
 class CadeData(object):
     """A standardized data format for empdens.cade.Cade."""
 
-    def __init__(self, X, y):
-        assert isinstance(X, pd.DataFrame)
+    def __init__(self, X: pd.DataFrame, y: pd.Series | np.ndarray) -> None:
+        """Initialize the CadeData object.
+
+        Args:
+            X: The feature matrix.
+            y: The target vector.
+        """
         assert len(y.shape) == 1
         assert len(y) == X.shape[0]
         self.X = X
@@ -20,12 +28,13 @@ def load_Japanese_vowels_data():
 
 
 def load_SHAP_census_data():
-    """This loads the 'adults' dataset cached in SHAP, borrowing a few SHAP
-    file parsing code snippets, https://github.com/slundberg/shap/blob/master/shap/datasets.py.
+    """Loads the 'adults' dataset available in SHAP.
+
+    This borrows a few SHAP file parsing code snippets, https://github.com/slundberg/shap/blob/master/shap/datasets.py.
     """
     try:
         pass
-    except Exception as err:
+    except Exception:
         raise Exception("Do `pip install shap` and try again")
     dtypes = [
         ("Age", "float32"),
