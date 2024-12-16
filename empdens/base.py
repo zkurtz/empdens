@@ -22,7 +22,7 @@ class AbstractDensity(ABC):
         # Aliases for density:
         self.predict = self.density
 
-    def train(self, data):
+    def train(self, df: pd.DataFrame) -> None:
         """A method for defining or updating the self.density function base on data."""
         raise Exception("Not yet implemented")
 
