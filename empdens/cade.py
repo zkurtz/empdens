@@ -21,24 +21,34 @@ class Cade(AbstractDensity):
     """Classifier-adjusted density estimation.
 
     Based on https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
-
-    :param initial_density:
-    :param sim_size:
     """
 
     # A soft target for the number of instances to simulate when `sim_size` is "auto"
     simulation_size_attractor = 10000
 
-    def __init__(self, initial_density=None, classifier=Lgbm(), sim_size="auto", verbose=False):
-        """Initialize the classifier-adjusted density estimation model."""
+    def __init__(
+        self,
+        initial_density: AbstractDensity | None = None,
+        classifier: AbstractLearner | None = None,
+        sim_size: str = "auto",
+        verbose: bool = False,
+    ):
+        """Initialize the classifier-adjusted density estimation model.
+
+        Args:
+            initial_density: A naive density model to use as the basis for CADE estimation. CADE uses this as a
+                reference such that the final estimated density is a product of the initial density and the classifier
+                adjustment. If None, defaults to a JointDensity model.
+            classifier: A classifier to use for the adjustment. If None, defaults to a LightGBM classifier.
+            sim_size: The number of synthetic samples to simulate. If "auto", the simulation size is set as the
+                geometric mean between the data size and `simulation_size_attractor`. If a positive number less than
+                100, the simulation size is `round(sim_size)*df.shape[0]`. If `sim_size` is greater than or equal to
+                100, the simulation size is `round(sim_size)`.
+            verbose: Whether to print diagnostic information.
+        """
         super().__init__()
-        if initial_density is None:
-            self.initial_density = models.JointDensity()
-        else:
-            self.initial_density = initial_density
-        assert isinstance(self.initial_density, AbstractDensity)
-        assert isinstance(classifier, AbstractLearner)
-        self.classifier = classifier
+        self.initial_density = initial_density or models.JointDensity()
+        self.classifier = classifier or Lgbm()
         self.sim_size = sim_size
         self.verbose = verbose
 
