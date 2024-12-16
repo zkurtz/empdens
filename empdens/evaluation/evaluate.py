@@ -1,9 +1,19 @@
+"""Evaluation of density estimators."""
+
 import numpy as np
 import pandas as pd
 
 
 class Evaluation(object):
+    """A collection of metrics of density estimation performance."""
+
     def __init__(self, estimators, truth=None):
+        """Initialize the Evaluation object.
+
+        Args:
+            estimators: A dictionary of estimator predictions.
+            truth: The true density values.
+        """
         for est in estimators:
             assert isinstance(estimators[est], np.ndarray)
         self.estimators = estimators
@@ -19,6 +29,7 @@ class Evaluation(object):
         }
 
     def _assert_truth_available(self):
+        """Raise an exception if truth is not available."""
         if self.truth is None:
             raise Exception("rank-order correlation can't be computed since you did not provide anything for `truth`")
 
@@ -61,9 +72,11 @@ class Evaluation(object):
         return np.mean(pred)
 
     def evaluate_estimator(self, name):
+        """Evaluate the estimator with the given name."""
         est = self.estimators[name]
         return [fun(est) for name, fun in self.metrics.items()]
 
     def evaluate(self):
+        """Evaluate all estimators."""
         estimators = self.estimators.keys()
         return pd.DataFrame({e: self.evaluate_estimator(e) for e in estimators}, index=self.metrics)
