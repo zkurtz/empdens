@@ -39,8 +39,6 @@ testpaths = ["tests",]
 [tool.pyright]
 include = ["empdens", "tests"]
 exclude = [
-    "empdens/cade.py",
-    "empdens/classifiers/base.py",
     "empdens/classifiers/lightgbm.py",
     "empdens/classifiers/xgboost.py",
     "empdens/evaluation/evaluate.py",

@@ -35,6 +35,8 @@ as detailed in our
 
 We're [on pypi](https://pypi.org/project/empdens/), so `pip install empdens`.
 
+To keep the package lean, several packages that it's capable of using are not included as required dependencies. So, depending on your usage, you may get an error message reminding you to install any of the packages listed under the `extras` group in the `pyproject.toml` file.
+
 Consider using the [simplest-possible virtual environment](https://gist.github.com/zkurtz/4c61572b03e667a7596a607706463543) if working directly on this repo.
 
 

@@ -7,6 +7,7 @@ import tempfile
 import warnings
 from time import time
 
+import numpy as np
 import pandas as pd
 from psutil import cpu_count
 
@@ -96,7 +97,7 @@ class Lgbm(AbstractLearner):
         tdiff = str(round(time() - t0))
         self.vp("LightGBM training took " + tdiff + " seconds")
 
-    def predict(self, X):
+    def predict(self, X) -> np.ndarray:
         """Predicts the target values using the trained LightGBM model.
 
         Args:
