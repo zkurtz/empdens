@@ -37,7 +37,7 @@ class SklearnKDE(AbstractDensity):
         self.kde = KernelDensity(**self.params)
         _ = self.kde.fit(df.to_numpy())
 
-    def density(self, df: pd.DataFrame) -> np.ndarray:
+    def density(self, X: pd.DataFrame) -> np.ndarray:
         """Estimate the density of the data at the given points."""
-        log_dens = self.kde.score_samples(df.to_numpy())
+        log_dens = self.kde.score_samples(X.to_numpy())
         return np.exp(log_dens)
