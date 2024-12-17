@@ -1,3 +1,5 @@
+"""Model a joint density of multiple features."""
+
 import numpy as np
 import pandas as pd
 
@@ -7,7 +9,10 @@ from empdens.models.piecewise_uniform import PiecewiseUniform
 
 
 class JointDensity(AbstractDensity):
-    def __init__(self, numeric_params=None, verbose=False):
+    """Model a joint density of multiple features."""
+
+    def __init__(self, numeric_params=None, verbose: bool = False) -> None:
+        """Initialize the joint density model."""
         super().__init__()
         self.Categorical = Multinomial
         self.Numeric = PiecewiseUniform
@@ -37,6 +42,7 @@ class JointDensity(AbstractDensity):
             return self._fit_continuous(series)
 
     def train(self, df, categorical_features=None):
+        """Train the joint density model on a DataFrame."""
         assert isinstance(df, pd.DataFrame)
         if categorical_features is None:
             self.categorical_features = []
@@ -48,6 +54,7 @@ class JointDensity(AbstractDensity):
         # self.univariates = {v: stats.uniform(loc[k], scale[k]) for k, v in enumerate(self.columns)}
 
     def density(self, x, log=False):
+        """Compute the density for an individual value."""
         assert isinstance(x, pd.DataFrame)
         assert all(x.columns == self.columns)
         df_log_univariate = pd.DataFrame({v: np.log(self.univariates[v].density(x[v])) for v in self.columns})

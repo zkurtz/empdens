@@ -1,4 +1,4 @@
-import pdb
+"""Decision tree density estimation."""
 
 import numpy as np
 
@@ -7,9 +7,8 @@ from empdens.base import AbstractDensity
 # TODO: generalize to handle categoricals
 
 
-def log_node_volume(node):
+def log_node_volume(node) -> float:
     """Compute the log-volume of a node in terms of its bounds."""
-    assert isinstance(node, Cube)
     diffs = node.bounds[1] - node.bounds[0]
     ldiffs = np.log(diffs)
     return np.sum(ldiffs)
@@ -21,11 +20,13 @@ def node_volume(node):
     return np.exp(lv)
 
 
-def split_bounds(bounds, feature_idx, value):
-    """:param bounds: the bounds to split
-    :param feature_idx: index of feature to split on
-    :param value: value to split on
-    :return: (left, right) bounds tuple
+def split_bounds(bounds, feature_idx, value) -> dict[str, np.ndarray]:
+    """Split the bounds of a node along a feature.
+
+    Args:
+        bounds: Two rows, with upper and lower bounds for each feature.
+        feature_idx: Index of feature to split on.
+        value: Value to split on.
     """
     bounds_left = np.copy(bounds)
     bounds_right = np.copy(bounds)
@@ -35,14 +36,17 @@ def split_bounds(bounds, feature_idx, value):
 
 
 class Node:
-    """Store the attributes of a node:
+    """Store the attributes of a node.
+
     - bounds
     - if a leaf, the list of indices of training data contained
     - if not a leaf, the split that defines its children.
     """
 
-    def __init__(self, bounds, members):
-        """:param bounds: (np.array) two rows, with upper and lower bounds for each feature
+    def __init__(self, bounds, members) -> None:
+        """Initialize the node.
+
+        :param bounds: (np.array) two rows, with upper and lower bounds for each feature
         :param members: (numpy integer array) indices of training data falling in this node
         """
         self.bounds = bounds
@@ -52,7 +56,21 @@ class Node:
         self.left = None
         self.right = None
 
-    def split(self, feature_idx, value, left_members, right_members):
+    def split(
+        self,
+        feature_idx: int,
+        value: float,
+        left_members: np.ndarray,
+        right_members: np.ndarray,
+    ) -> None:
+        """Split the node into two children.
+
+        Args:
+            feature_idx: (int) index of the feature to split on
+            value: (float) value to split on
+            left_members: (numpy integer array) indices of training data falling in the left child
+            right_members: (numpy integer array) indices of training data falling in the right child
+        """
         child_bounds = split_bounds(self.bounds, feature_idx, value)
         self.left = Node(bounds=child_bounds["left"], members=left_members)
         self.right = Node(bounds=child_bounds["right"], members=right_members)
@@ -61,7 +79,10 @@ class Node:
 
 
 class Tree:
+    """A decision tree for density estimation."""
+
     def __init__(self, df):
+        """Initialize the tree."""
         self.n_features = df.shape[1]
         self.n_points = df.shape[0]
         self._plant_me(df)
@@ -82,6 +103,7 @@ class TreeDensity(AbstractDensity):
     """A decision-tree density."""
 
     def __init__(self, verbose=False):
+        """Initialize the decision tree density model."""
         super().__init__(verbose=verbose)
 
     def train(self, df):
@@ -102,5 +124,4 @@ class TreeDensity(AbstractDensity):
             argument that was passed to self.train
         """
         self._validate_data(X)
-        # Initial density estimate
-        pdb.set_trace()
+        raise NotImplementedError("Not clear what the plan was for this.")

@@ -82,3 +82,4 @@ ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["D104"] # would require module-level documentation
 "test_*.py" = ["D"]
+"*.ipynb" = ["D"]

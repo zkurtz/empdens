@@ -1,10 +1,10 @@
-import pdb
+"""Piecewise uniform density estimator."""
 
 import numpy as np
 import pandas as pd
 import shmistogram as shmist
-from shmistogram.binners.bayesblocks import BayesianBlocks
 from scipy import stats
+from shmistogram.binners.bayesblocks import BayesianBlocks
 
 from empdens.base import AbstractDensity
 from empdens.models.multinomial import Multinomial
@@ -19,7 +19,21 @@ class PiecewiseUniform(AbstractDensity):
     - 'crowd' points, approximated by a standard piecewise uniform distribution
     """
 
-    def __init__(self, alpha=None, loner_min_count=20, binner=None, verbose=0):
+    def __init__(
+        self,
+        alpha: float | None = None,
+        loner_min_count: int = 20,
+        binner=None,
+        verbose: int = 0,
+    ) -> None:
+        """Initialize the piecewise uniform density estimator.
+
+        Args:
+            alpha: the proportion of loner points
+            loner_min_count: minimum number of loner points
+            binner: a binner object from shmistogram
+            verbose: level of verbosity
+        """
         super().__init__()
         self.alpha = alpha
         self.loner_min_count = loner_min_count
@@ -101,7 +115,8 @@ class PiecewiseUniform(AbstractDensity):
         assert result.shape[0] == len(x)
         return result.density.values
 
-    def rvs(self, n):
+    def rvs(self, n: int) -> np.ndarray:
+        """Simulate n draws."""
         # Flip coins to determine number of loners versus crowd
         n_loners = stats.binom.rvs(n=n, p=self.loner_crowd_shares[0], size=1)[0]
         n_crowd = n - n_loners
@@ -112,10 +127,7 @@ class PiecewiseUniform(AbstractDensity):
             loners = np.array([])
         # Sample the crowd
         if n_crowd > 0:
-            try:
-                assert self.crowd_multinom is not None
-            except Exception as err:
-                pdb.set_trace()
+            assert self.crowd_multinom is not None, "Crowd multinomial not defined"
             bins = pd.Series(self.crowd_multinom.rvs(n_crowd)).value_counts()
             crowd_list = [self.crowd_uniforms[k].rvs(bins[k]) for k in bins.index.values]
             crowd = np.array([x for y in crowd_list for x in y])
