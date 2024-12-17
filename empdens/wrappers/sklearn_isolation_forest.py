@@ -34,15 +34,15 @@ class SklearnIsolationForest(AbstractDensity):
         Args:
             df: Data to train the model on.
         """
-        self.forest = IsolationForest(**self.params)
+        self.forest = IsolationForest(**self.params)  # pyright: ignore
         _ = self.forest.fit(df.to_numpy())
 
-    def density(self, df: pd.DataFrame) -> np.ndarray:
+    def density(self, X: pd.DataFrame) -> np.ndarray:
         """Estimate the density of the data at the given points.
 
         Args:
-            df: Data to estimate the density over.
+            X: Data to estimate the density over.
         """
         # TODO: explain how this is kinda sorta getting a density
-        dens = 1 + self.forest.score_samples(df.to_numpy())
+        dens = 1 + self.forest.score_samples(X.to_numpy())
         return dens
