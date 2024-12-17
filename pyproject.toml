@@ -59,24 +59,6 @@ exclude = [
 
 [tool.ruff]
 line-length = 120
-extend-exclude = [
-    "empdens/models/__init__.py",
-    "empdens/models/joint.py",
-    "empdens/models/multinomial.py",
-    "empdens/models/piecewise_uniform.py",
-    "empdens/simulators/__init__.py",
-    "empdens/simulators/bivariate.py",
-    "empdens/simulators/univariate.py",
-    "empdens/tree/__init__.py",
-    "empdens/tree/tree.py",
-    "empdens/version.py",
-    "empdens/wrappers/__init__.py",
-    "empdens/wrappers/fastKDE.py",
-    "empdens/wrappers/sklearn_isolation_forest.py",
-    "empdens/wrappers/sklearn_kde.py",
-    "notebooks/speed_benchmarks.ipynb",
-    "tests/test_fastkde.py",
-]
 
 [tool.ruff.lint]
 select = [
@@ -100,3 +82,4 @@ ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["D104"] # would require module-level documentation
 "test_*.py" = ["D"]
+"*.ipynb" = ["D"]

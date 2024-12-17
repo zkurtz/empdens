@@ -1,8 +1,5 @@
-import pytest
-from scipy import stats
-
-fastkde = pytest.importorskip("fastkde")
 from fastkde import fastKDE
+from scipy import stats
 
 
 def test_fastkde_runs():

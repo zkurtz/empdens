@@ -1,4 +1,4 @@
-import pdb
+"""Model a single categorical feature."""
 
 import numpy as np
 import pandas as pd
@@ -29,11 +29,11 @@ class Multinomial(AbstractDensity):
     def _train_by_accepting_params(self, counts, values=None):
         self.df = pd.DataFrame({"n_obs": counts})
         if values is not None:
-            pdb.set_trace()
             self.df.index = values
 
     def train(self, series=None, counts=None, values=None):
-        """Specify at least series or counts but not both
+        """Specify at least series or counts but not both.
+
         :param series: (pandas.Series or SeriesTable of integers
         :param counts: numpy 1-d array of counts corresponding to
         each entry of `values`
@@ -52,7 +52,7 @@ class Multinomial(AbstractDensity):
         """Compute the density for an individual value."""
         try:
             return self.df.density[x]
-        except Exception as err:
+        except Exception:
             # assert x not in self.df.index.values
             return self.out_of_sample_dens
 
@@ -73,5 +73,6 @@ class Multinomial(AbstractDensity):
         )
         return df.density.fillna(self.out_of_sample_dens).values
 
-    def rvs(self, n=1):
+    def rvs(self, n: int = 1) -> np.ndarray:
+        """Randomly sample from the multinomial distribution."""
         return np.random.choice(a=self.df.index.values, size=n, p=self.df.density.values, replace=True)

@@ -1,1 +1,1 @@
-from empdens.tree.tree import TreeDensity
+from empdens.tree.tree import TreeDensity as TreeDensity
