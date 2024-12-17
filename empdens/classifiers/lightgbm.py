@@ -4,39 +4,28 @@ import copy
 import os
 import pickle
 import tempfile
-import warnings
 from time import time
+from typing import Any
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 from psutil import cpu_count
 
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    try:
-        import lightgbm as lgb
-    except Exception as err:
-        del err
-        pass
-
 from empdens.classifiers.base import AbstractLearner
-
-
-def assert_lightgbm_installed():
-    """Asserts that the lightgbm package is installed."""
-    try:
-        lgb
-    except Exception as err:
-        raise Exception("empdens.classifiers.lightgbm.Lgbm requires lightgbm to be installed, but it is not") from err
 
 
 class Lgbm(AbstractLearner):
     """LightGBM classifier."""
 
-    def __init__(self, params=None, categorical_features=None, verbose=False):
+    def __init__(
+        self,
+        params: dict[str, Any] | None = None,
+        categorical_features: list[str] | None = None,
+        verbose: bool = False,
+    ) -> None:
         """Initializes the LightGBM model."""
         super().__init__(params, verbose)
-        assert_lightgbm_installed()
         self.nround = self.params.pop("num_boost_round")
         self.categorical_features = categorical_features
 
@@ -77,7 +66,12 @@ class Lgbm(AbstractLearner):
         """
         self.features = data.X.columns.tolist()
         self._parse_categoricals()
-        return lgb.Dataset(data.X, data.y, feature_name=self.features, categorical_feature=self.categoricals)
+        return lgb.Dataset(
+            data.X,
+            data.y,
+            feature_name=self.features,
+            categorical_feature=self.categoricals,  # pyright: ignore[reportArgumentType]
+        )
 
     def train(self, data):
         """Trains the LightGBM model.
@@ -92,7 +86,7 @@ class Lgbm(AbstractLearner):
             train_set=ld,
             num_boost_round=self.nround,
             feature_name=self.features,
-            categorical_feature=self.categoricals,
+            categorical_feature=self.categoricals,  # pyright: ignore[reportArgumentType]
         )
         tdiff = str(round(time() - t0))
         self.vp("LightGBM training took " + tdiff + " seconds")
@@ -106,7 +100,9 @@ class Lgbm(AbstractLearner):
         Returns:
             np.ndarray: The predicted target values.
         """
-        return self.bst.predict(X)
+        preds = self.bst.predict(X)
+        assert isinstance(preds, np.ndarray), "LightGBM predictions must be a numpy array"
+        return preds
 
     def freeze(self):
         """Serializes the trained LightGBM model to a binary attribute."""
