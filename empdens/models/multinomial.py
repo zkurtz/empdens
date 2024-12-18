@@ -73,6 +73,7 @@ class Multinomial(AbstractDensity):
         )
         return df.density.fillna(self.out_of_sample_dens).values
 
-    def rvs(self, n: int = 1) -> np.ndarray:
+    def rvs(self, n: int = 1) -> pd.DataFrame:
         """Randomly sample from the multinomial distribution."""
-        return np.random.choice(a=self.df.index.values, size=n, p=self.df.density.values, replace=True)
+        values = np.random.choice(a=self.df.index.to_numpy(), size=n, p=self.df.density.to_numpy(), replace=True)
+        return pd.DataFrame({"values": values})

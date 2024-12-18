@@ -28,7 +28,7 @@ class Multinomial:
         """Calculate the density at the given points."""
         assert X.shape[1] == 1
         points = X.to_numpy()[:, 0]
-        return [self.probs[k] for k in points]
+        return np.array([self.probs[k] for k in points])
 
 
 class BartSimpson(AbstractDensity):
@@ -66,7 +66,8 @@ class BartSimpson(AbstractDensity):
         """Calculate the density at the given points."""
         assert X.shape[1] == 1
         points = X.to_numpy()[:, 0]
-        return np.column_stack([g.pdf(points) for g in self.gaussians]) @ self.multinomial.probs
+        pdf_funcs = [gauss.pdf for gauss in self.gaussians]  # pyright: ignore
+        return np.column_stack([func(points) for func in pdf_funcs]) @ self.multinomial.probs
 
     def plot(self, n: int = 200, xlims: list[float | int] = [-2, 2]) -> None:
         """Plot the density."""
