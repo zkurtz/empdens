@@ -23,6 +23,7 @@ dev = [
   "debtcloset>=0.3.0",
   "jupyter>=1.1.1",
   "ipykernel>=6.29.5",
+  "tox>=4.23.2",
 ]
 extras = [
     "astropy>=6.1.7",
@@ -32,6 +33,9 @@ extras = [
 
 [tool.uv]
 package = true
+
+[tool.setuptools.packages.find]
+include = ["empdens*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests",]
