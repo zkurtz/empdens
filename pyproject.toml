@@ -36,6 +36,19 @@ package = true
 [tool.pytest.ini_options]
 testpaths = ["tests",]
 
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+runner = uv-venv-lock-runner
+
+[testenv]
+runner = uv-venv-lock-runner
+deps = pytest
+commands = pytest
+extras =
+    extras
+"""
+
 [tool.pyright]
 include = ["empdens", "tests"]
 exclude = [
