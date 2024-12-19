@@ -1,5 +1,12 @@
 # empdens, empirical density estimation in python
 
+```
+        uv remove empdens
+        uv build
+        uv install dist/*.whl
+        pytest
+```
+
 **empdens** provides a unified interface to several density estimation packages,
 including an implementation of
 [classifier-adjusted density
