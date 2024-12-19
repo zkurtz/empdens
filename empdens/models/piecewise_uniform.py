@@ -66,7 +66,7 @@ class PiecewiseUniform(AbstractDensity):
             self._set_null_crowd()
         else:
             self.crowd_multinom = Multinomial()
-            self.crowd_multinom.train(counts=self.crowd_bins.freq.values)
+            self.crowd_multinom.train(df=self.crowd_bins.freq.to_numpy())
             self.crowd_uniforms = [self._uniform(row) for _, row in self.crowd_bins.iterrows()]
             # A density lookup for each member of the crowd (assuming asof backward merge)
             crowd_share = self.loner_crowd_shares[1]
@@ -108,7 +108,7 @@ class PiecewiseUniform(AbstractDensity):
             ref_loners = ref[~is_crowd].copy()
             ref_crowd = ref[is_crowd].drop("density", axis=1)
         else:
-            ref_loners = pd.DataFrame(columns=["xval"])
+            ref_loners = pd.DataFrame(columns=pd.Index(["xval"]))
             ref_crowd = ref
         ref_crowd = ref_crowd.sort_values(by="xval")  # pyright: ignore
         ref_crowd = ref_crowd.reset_index(drop=True)

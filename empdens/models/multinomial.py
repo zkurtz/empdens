@@ -31,7 +31,7 @@ class Multinomial(AbstractDensity):
         if values is not None:
             self.df.index = values
 
-    def train(self, series=None, counts=None, values=None):
+    def train(self, df: pd.DataFrame, counts=None, values=None):
         """Specify at least series or counts but not both.
 
         :param series: (pandas.Series or SeriesTable of integers
@@ -40,6 +40,9 @@ class Multinomial(AbstractDensity):
         :param values: numpy 1-d array; integers representing each multinomial outcome;
         ignored if `counts` is None.
         """
+        if df.shape[1] > 1:
+            raise Exception("Only one-dimensional data is supported")
+        series = df.iloc[:, 0]
         if series is not None:
             self._train_empirically(series)
         else:
@@ -48,13 +51,15 @@ class Multinomial(AbstractDensity):
             self._train_by_accepting_params(counts, values=values)
         self._density()
 
-    def density(self, x):
-        """Compute the density for an individual value."""
-        try:
-            return self.df.density[x]
-        except Exception:
-            # assert x not in self.df.index.values
-            return self.out_of_sample_dens
+    def density(self, X: pd.DataFrame) -> np.ndarray:
+        """Compute the density for an individual value. TODO: should not be for individual value."""
+        raise NotImplementedError
+        # breakpoint()
+        # try:
+        #     return self.df.density[x]
+        # except Exception:
+        #     # assert x not in self.df.index.values
+        #     return self.out_of_sample_dens
 
     def density_series(self, x):
         """Fast density computation for a list of values.
