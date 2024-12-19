@@ -20,7 +20,6 @@ dev = [
   "pyright >=1.1.378",
   "ruff >=0.7.4",
   "pytest >=8.3.2",
-  "debtcloset>=0.3.0",
   "jupyter>=1.1.1",
   "ipykernel>=6.29.5",
 ]
@@ -38,20 +37,6 @@ testpaths = ["tests",]
 
 [tool.pyright]
 include = ["empdens", "tests"]
-exclude = [
-    "empdens/classifiers/xgboost.py",
-    "empdens/evaluation/evaluate.py",
-    "empdens/models/joint.py",
-    "empdens/models/multinomial.py",
-    "empdens/models/piecewise_uniform.py",
-    "empdens/simulators/bivariate.py",
-    "empdens/simulators/univariate.py",
-    "empdens/tree/tree.py",
-    "tests/test_cade.py",
-    "tests/test_fastkde.py",
-    "tests/test_import.py",
-    "tests/test_simulators.py",
-]
 
 [tool.ruff]
 line-length = 120

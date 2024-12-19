@@ -26,4 +26,6 @@ class Zena(AbstractDensity):
     def density(self, X: pd.DataFrame) -> np.ndarray:
         """Calculate the density at the given points."""
         points = X.to_numpy()
-        return np.array([self.gauss.pdf(p[0]) * self.triang.pdf(p[1]) for p in points])
+        gauss_pdf = self.gauss.pdf  # pyright: ignore
+        triang_pdf = self.triang.pdf  # pyright: ignore
+        return np.array([gauss_pdf(p[0]) * triang_pdf(p[1]) for p in points])

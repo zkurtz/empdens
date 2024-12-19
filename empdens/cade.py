@@ -30,7 +30,7 @@ class Cade(AbstractDensity):
         self,
         initial_density: AbstractDensity | None = None,
         classifier: AbstractLearner | None = None,
-        sim_size: str = "auto",
+        sim_size: str | int = "auto",
         verbose: bool = False,
     ):
         """Initialize the classifier-adjusted density estimation model.
