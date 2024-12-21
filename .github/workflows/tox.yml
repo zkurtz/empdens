@@ -1,0 +1,26 @@
+name: Test build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Test build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v4
+
+    - name: Install uv and set the python version
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "0.5.11"
+        # see https://github.com/tox-dev/tox-uv/issues/110
+        python-version: 3.13
+
+    - name: Install tox-uv
+      run: uv tool install tox --with tox-uv
+
+    - name: Run tests with tox
+      run: tox
