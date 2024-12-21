@@ -24,12 +24,12 @@ class JointDensity(AbstractDensity):
         model.train(series)
         return model
 
-    def _fit_continuous(self, values):
+    def _fit_continuous(self, values: pd.Series) -> PiecewiseUniform:
         params = {}
         if self.numeric_params is not None:
             params = self.numeric_params
         model = self.Numeric(verbose=self.verbose - 1, **params)
-        model.train(values)
+        model.train(values.to_frame())
         return model
 
     def _fit_univarite(self, series):
@@ -53,12 +53,14 @@ class JointDensity(AbstractDensity):
         self.univariates = {v: self._fit_univarite(df[v]) for v in self.columns}
         # self.univariates = {v: stats.uniform(loc[k], scale[k]) for k, v in enumerate(self.columns)}
 
-    def density(self, x, log=False):
+    def density(self, X: pd.DataFrame, log: bool = False):
         """Compute the density for an individual value."""
-        assert isinstance(x, pd.DataFrame)
-        assert all(x.columns == self.columns)
-        df_log_univariate = pd.DataFrame({v: np.log(self.univariates[v].density(x[v])) for v in self.columns})
-        log_dens = df_log_univariate.sum(axis=1).values
+        assert isinstance(X, pd.DataFrame)
+        assert all(X.columns == self.columns)
+        df_log_univariate = pd.DataFrame(
+            {v: np.log(self.univariates[v].density(X[[v]])) for v in self.columns},  # pyright: ignore
+        )
+        log_dens = df_log_univariate.sum(axis=1).to_numpy()
         if log:
             return log_dens
         return np.exp(log_dens)
@@ -67,5 +69,5 @@ class JointDensity(AbstractDensity):
         """Generate n samples from the fitted distribution."""
         if not hasattr(self, "univariates"):
             raise Exception("Call `train` before you call `rvs`")
-        samples = {v: self.univariates[v].rvs(n) for v in self.columns}
-        return pd.DataFrame(samples)[self.columns]
+        samples = [self.univariates[col].rvs(n).rename(columns={0: col}) for col in self.columns]
+        return pd.concat(samples, axis=1)

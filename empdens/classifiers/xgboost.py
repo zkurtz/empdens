@@ -34,8 +34,8 @@ class Xgbm(AbstractLearner):
 
     def as_xgb_data(self, data):
         """Convert data to xgb.DMatrix."""
-        self._parse_categoricals()
-        return xgb.Dataset(data.X, data.y)
+        # self._parse_categoricals()
+        return xgb.DMatrix(data.X, data.y)
 
     def train(self, data):
         """Train the model.
@@ -77,8 +77,11 @@ class Xgbm(AbstractLearner):
 
     def importance(self):
         """Return feature importance."""
-        return (
-            pd.DataFrame({"feature": self.features, "gain": self.bst.feature_importance(importance_type="gain")})
-            .sort_values("gain", ascending=False)
-            .reset_index(drop=True)
+        df = pd.DataFrame(
+            {
+                "feature": self.bst.feature_name(),
+                "gain": self.bst.feature_importance(importance_type="gain"),
+            }
         )
+        df = df.sort_values("gain", ascending=False)
+        return df.reset_index(drop=True)

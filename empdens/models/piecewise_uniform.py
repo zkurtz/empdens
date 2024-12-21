@@ -66,7 +66,7 @@ class PiecewiseUniform(AbstractDensity):
             self._set_null_crowd()
         else:
             self.crowd_multinom = Multinomial()
-            self.crowd_multinom.train(counts=self.crowd_bins.freq.values)
+            self.crowd_multinom.train(df=self.crowd_bins.freq.to_frame())
             self.crowd_uniforms = [self._uniform(row) for _, row in self.crowd_bins.iterrows()]
             # A density lookup for each member of the crowd (assuming asof backward merge)
             crowd_share = self.loner_crowd_shares[1]
@@ -76,8 +76,11 @@ class PiecewiseUniform(AbstractDensity):
                 [lookup, pd.DataFrame({"xval": self.crowd_bins[["ub"]].max().values, "density": [np.nan]})], sort=True
             )
 
-    def train(self, series):
+    def train(self, df: pd.DataFrame) -> None:
         """:param series: pandas series of numeric values"""
+        assert df.shape[1] == 1, "Only one-dimensional data is supported"
+        name = df.columns[0]
+        series = df[name]
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares
         # Loners
@@ -90,10 +93,13 @@ class PiecewiseUniform(AbstractDensity):
             mmin = self.multinomial_df.density.min()
         self.oos_density = min(mmin, self.crowd_lookup.density.min(), 1 / shm.n_obs) / 2
 
-    def density(self, x):
-        """Compute the density function on each row of x."""
+    def density(self, X: pd.DataFrame) -> np.ndarray:
+        """Compute the density function on each row of X."""
+        if X.shape[1] > 1:
+            raise ValueError("Only one-dimensional data is supported")
+        x_series = X.iloc[:, 0]
         # Identify the unique values for which densities are needed
-        ref = pd.DataFrame({"xval": x.unique()})
+        ref = pd.DataFrame({"xval": x_series.unique()})
         if self.multinomial is not None:
             # Look up each loner in the multinomial levels; those with no match will be
             #   treated as members of the crowd
@@ -102,38 +108,44 @@ class PiecewiseUniform(AbstractDensity):
             ref_loners = ref[~is_crowd].copy()
             ref_crowd = ref[is_crowd].drop("density", axis=1)
         else:
-            ref_loners = None
+            ref_loners = pd.DataFrame(columns=pd.Index(["xval"]))
             ref_crowd = ref
-        ref_crowd = ref_crowd.sort_values("xval").reset_index(drop=True)
+        ref_crowd = ref_crowd.sort_values(by="xval")  # pyright: ignore
+        ref_crowd = ref_crowd.reset_index(drop=True)
         if self.crowd_lookup.xval.dtype == "float64":
             ref_crowd.xval = ref_crowd.xval.astype("float64")
         ref_crowd_roll = pd.merge_asof(ref_crowd, self.crowd_lookup, on="xval")
-        final_ref = pd.concat([ref_loners, ref_crowd_roll])
+        assert isinstance(ref_crowd_roll, pd.DataFrame), "ref_crowd_roll is None"
+        assert isinstance(ref_loners, pd.DataFrame), "ref_loners is None"
+        final_ref = pd.concat([ref_loners, ref_crowd_roll], axis=0)
         final_ref["density"] = final_ref.density.fillna(self.oos_density)
-        xdf = pd.DataFrame({"xval": x.values, "order": range(len(x))})
+        xdf = pd.DataFrame({"xval": x_series.to_numpy(), "order": range(len(X))})
         result = final_ref.merge(xdf, right_on="xval", left_on="xval", how="right").sort_values("order")
-        assert result.shape[0] == len(x)
-        return result.density.values
+        assert result.shape[0] == len(X), "Mismatch in length"
+        return result.density.to_numpy()
 
-    def rvs(self, n: int) -> np.ndarray:
+    def rvs(self, n: int) -> pd.DataFrame:
         """Simulate n draws."""
         # Flip coins to determine number of loners versus crowd
-        n_loners = stats.binom.rvs(n=n, p=self.loner_crowd_shares[0], size=1)[0]
+        n_loners = stats.binom.rvs(n=n, p=self.loner_crowd_shares[0], size=1)
         n_crowd = n - n_loners
         # Sample the loners
         if n_loners > 0:
+            assert self.multinomial is not None, "Multinomial not defined"
             loners = self.multinomial.rvs(n_loners)
         else:
             loners = np.array([])
         # Sample the crowd
         if n_crowd > 0:
             assert self.crowd_multinom is not None, "Crowd multinomial not defined"
-            bins = pd.Series(self.crowd_multinom.rvs(n_crowd)).value_counts()
-            crowd_list = [self.crowd_uniforms[k].rvs(bins[k]) for k in bins.index.values]
+            values_df = self.crowd_multinom.rvs(n_crowd)
+            assert values_df.columns.to_list() == ["values"]
+            bins = values_df["values"].value_counts()
+            crowd_list = [self.crowd_uniforms[k].rvs(bins.iloc[k]) for k in range(len(bins))]
             crowd = np.array([x for y in crowd_list for x in y])
         else:
             crowd = np.array([])
         # Shuffle
         data = np.concatenate((loners, crowd))
         np.random.shuffle(data)
-        return data
+        return pd.DataFrame(data)
