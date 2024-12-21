@@ -40,20 +40,6 @@ testpaths = ["tests",]
 
 [tool.pyright]
 include = ["empdens", "tests"]
-exclude = [
-    "empdens/classifiers/xgboost.py",
-    "empdens/evaluation/evaluate.py",
-    "empdens/models/joint.py",
-    "empdens/models/multinomial.py",
-    "empdens/models/piecewise_uniform.py",
-    "empdens/simulators/bivariate.py",
-    "empdens/simulators/univariate.py",
-    "empdens/tree/tree.py",
-    "tests/test_cade.py",
-    "tests/test_fastkde.py",
-    "tests/test_import.py",
-    "tests/test_simulators.py",
-]
 
 [tool.ruff]
 line-length = 120

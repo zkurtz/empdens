@@ -79,4 +79,4 @@ class Evaluation(object):
     def evaluate(self):
         """Evaluate all estimators."""
         estimators = self.estimators.keys()
-        return pd.DataFrame({e: self.evaluate_estimator(e) for e in estimators}, index=self.metrics)
+        return pd.DataFrame({e: self.evaluate_estimator(e) for e in estimators}, index=pd.Index(self.metrics))

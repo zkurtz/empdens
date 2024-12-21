@@ -31,7 +31,7 @@ class AbstractDensity(ABC):
         """Return the density for each row of the pandas DataFrame X as a numpy array."""
         raise Exception("Not yet implemented")
 
-    def rvs(self, n):
+    def rvs(self, n: int) -> pd.DataFrame:
         """Returns n samples from the space."""
         raise Exception("Not yet implemented")
 
