@@ -430,19 +430,6 @@ wheels = [
 ]
 
 [[package]]
-name = "debtcloset"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "dummio" },
-    { name = "listwrap" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/55/76/4e9c04445ebecfef4aaea82779410472238c45f652c4b733c3cc9ab3756f/debtcloset-0.3.0.tar.gz", hash = "sha256:4f1d8d3b18f421f663e99d515d2e3389ddd18b0bf52d40d262ade5f22e624d5f", size = 6062 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/4f/227de0e6d45253b065d7fdfdd7b708feaac2c0b9c685b0c495607952bdbe/debtcloset-0.3.0-py3-none-any.whl", hash = "sha256:7986b2380a8871625a6e69d72e1095c83969b01beeecf62da2282ac668dd7e1f", size = 6709 },
-]
-
-[[package]]
 name = "debugpy"
 version = "1.8.11"
 source = { registry = "https://pypi.org/simple" }
@@ -495,18 +482,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dummio"
-version = "1.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "universal-pathlib" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a1/22/707b86004a63887f17556dcf2ddcced2595a1fedaf716c30ad0a24b0c787/dummio-1.5.0.tar.gz", hash = "sha256:42ae643067a8200d24924bb16b47fe46275d3ac61ca4b6f3ab0c8d79e38e9706", size = 9042 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/72/23c8a7cf73b213af452f5c2a55e23c17e2362184d01d2e04011ad8002033/dummio-1.5.0-py3-none-any.whl", hash = "sha256:e512b056456b5e742ec487d8834a4f98d443ac9156c51a10a7a9cd884ef1d6a7", size = 8710 },
-]
-
-[[package]]
 name = "empdens"
 version = "1.1.0"
 source = { editable = "." }
@@ -522,7 +497,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "debtcloset" },
     { name = "ipykernel" },
     { name = "jupyter" },
     { name = "pre-commit" },
@@ -549,7 +523,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "debtcloset", specifier = ">=0.3.0" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "pre-commit", specifier = ">=3.8.0" },
@@ -678,15 +651,6 @@ wheels = [
 ]
 
 [[package]]
-name = "fsspec"
-version = "2024.10.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a0/52/f16a068ebadae42526484c31f4398e62962504e5724a8ba5dc3409483df2/fsspec-2024.10.0.tar.gz", hash = "sha256:eda2d8a4116d4f2429db8550f2457da57279247dd930bb12f821b58391359493", size = 286853 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/b2/454d6e7f0158951d8a78c2e1eb4f69ae81beb8dca5fee9809c6c99e9d0d0/fsspec-2024.10.0-py3-none-any.whl", hash = "sha256:03b9a6785766a4de40368b88906366755e2819e758b83705c88cd7cb5fe81871", size = 179641 },
-]
-
-[[package]]
 name = "h11"
 version = "0.14.0"
 source = { registry = "https://pypi.org/simple" }
@@ -755,7 +719,7 @@ name = "ipykernel"
 version = "6.29.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appnope", marker = "platform_system == 'Darwin'" },
+    { name = "appnope", marker = "sys_platform == 'darwin'" },
     { name = "comm" },
     { name = "debugpy" },
     { name = "ipython" },
@@ -1207,15 +1171,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/84/6a/10c4921526600559530d49d70553d1bc1bd84c616808c629a620a6160305/lightgbm-4.5.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:7f0a3dded769d83560845f2c3fe1966630ec1ca527c380d9d48d9b35579a796e", size = 3425739 },
     { url = "https://files.pythonhosted.org/packages/4e/19/1b928cad70a4e1a3e2c37d5417ca2182510f2451eaadb6c91cd9ec692cae/lightgbm-4.5.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:960a0e7c077de0ca3053f1325d3edfc92ea815acf5176adcacdea0f635aeef9b", size = 3552481 },
     { url = "https://files.pythonhosted.org/packages/d9/28/3be76b591a2e14a031b681b8283acf1dec2ad521f6f1701b7957df68c466/lightgbm-4.5.0-py3-none-win_amd64.whl", hash = "sha256:7ccb73ee9fb74fbbf89ad24c57a6edad505aa8f2165d02b999a082dbbbb0ee57", size = 1444319 },
-]
-
-[[package]]
-name = "listwrap"
-version = "0.0.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c8/63/41e5f7dddfdae41fd120bb5a87b98430d411ca0c83e2443dc5b23b294224/listwrap-0.0.3.tar.gz", hash = "sha256:9daf136f01c17062a97bf481ccefb77080e5d3de3fedf1e984e222d7288edbc4", size = 3142 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/9e/12c965e06d14c4a9543d29412f21e413d00fda5c6e5ea2f5cb93e5835cbe/listwrap-0.0.3-py3-none-any.whl", hash = "sha256:2c7ed02c8ca4f63af3599d4c82de84fef672f0b3ef30bc218c70f852a6b95b37", size = 3080 },
 ]
 
 [[package]]
@@ -2466,18 +2421,6 @@ wheels = [
 ]
 
 [[package]]
-name = "universal-pathlib"
-version = "0.2.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "fsspec" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/21/dd871495af3933e585261adce42678dcdf1168c9d6fa0a8f7b6565e54472/universal_pathlib-0.2.6.tar.gz", hash = "sha256:50817aaeaa9f4163cb1e76f5bdf84207fa05ce728b23fd779479b3462e5430ac", size = 175427 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/4d/2e577f6db7aa0f932d19f799c18f604b2b302c65f733419b900ec07dbade/universal_pathlib-0.2.6-py3-none-any.whl", hash = "sha256:700dec2b58ef34b87998513de6d2ae153b22f083197dfafb8544744edabd1b18", size = 50087 },
-]
-
-[[package]]
 name = "uri-template"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2574,7 +2517,7 @@ version = "2.1.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
-    { name = "nvidia-nccl-cu12", marker = "platform_machine != 'aarch64' and platform_system == 'Linux'" },
+    { name = "nvidia-nccl-cu12", marker = "platform_machine != 'aarch64' and sys_platform == 'linux'" },
     { name = "scipy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/48/b0/131ffc4a15fd3acee9be3a7baa6b2fa6faa479799c51b880de9fc3ddf550/xgboost-2.1.3.tar.gz", hash = "sha256:7699ec4226156887d3afc665c63ab87469db9d46e361c702ba9fccd22535730c", size = 1090326 }
