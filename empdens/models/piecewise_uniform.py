@@ -5,6 +5,7 @@ import pandas as pd
 import shmistogram as shmist
 from scipy import stats
 from shmistogram.binners.bayesblocks import BayesianBlocks
+from shmistogram.tabulation import SeriesTable
 
 from empdens.base import AbstractDensity
 from empdens.models.multinomial import Multinomial
@@ -44,12 +45,12 @@ class PiecewiseUniform(AbstractDensity):
     def _uniform(self, bin):
         return stats.uniform(bin.lb, bin.ub - bin.lb)
 
-    def _train_loners(self, loners):
+    def _train_loners(self, loners: SeriesTable) -> None:
         if loners.n == 0:
             self.multinomial = None
         else:
             m = Multinomial()
-            m.train(loners)
+            m.train(loners.df)
             self.multinomial_df = self.loner_crowd_shares[0] * m.df[["density"]]
             self.multinomial = m
 
@@ -134,7 +135,7 @@ class PiecewiseUniform(AbstractDensity):
         # Sample the loners
         if n_loners > 0:
             assert self.multinomial is not None, "Multinomial not defined"
-            loners = self.multinomial.rvs(n_loners)
+            loners = self.multinomial.rvs(n_loners)["values"].to_numpy()
         else:
             loners = np.array([])
         # Sample the crowd
