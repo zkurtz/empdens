@@ -85,8 +85,6 @@ class Lgbm(AbstractLearner):
             params=copy.deepcopy(self.params),
             train_set=ld,
             num_boost_round=self.nround,
-            feature_name=self.features,
-            categorical_feature=self.categoricals,  # pyright: ignore[reportArgumentType]
         )
         tdiff = str(round(time() - t0))
         self.vp("LightGBM training took " + tdiff + " seconds")
