@@ -534,7 +534,6 @@ dependencies = [
     { name = "pandas" },
     { name = "psutil" },
     { name = "scikit-learn" },
-    { name = "setuptools" },
     { name = "shmistogram" },
 ]
 
@@ -561,7 +560,6 @@ requires-dist = [
     { name = "pandas", specifier = ">=0.24.2" },
     { name = "psutil", specifier = ">=6.1.0" },
     { name = "scikit-learn", specifier = ">=0.20.3" },
-    { name = "setuptools", specifier = ">=75.6.0" },
     { name = "shmistogram", specifier = ">=0.4.1" },
 ]
 
