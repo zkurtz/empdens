@@ -125,8 +125,8 @@ class Cade(AbstractDensity):
 
         Apply equation 2.1 in https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 
-        :param X: (pd.DataFrame or numpy array) Must match the exact column order of the `df`
-            argument that was passed to self.train
+        Args:
+            X: Data frame matching the schema of the training data.
         """
         self._validate_data(X)
         # Initial density estimate
