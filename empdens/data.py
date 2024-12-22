@@ -1,8 +1,10 @@
 """Data structures."""
 
+from importlib import resources
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import pkg_resources
 
 
 class CadeData(object):
@@ -21,10 +23,11 @@ class CadeData(object):
         self.y = y
 
 
-def load_Japanese_vowels_data():
+def load_Japanese_vowels_data() -> pd.DataFrame:
     """Data downloaded from http://odds.cs.stonybrook.edu/japanese-vowels-data/."""
-    DATA_PATH = pkg_resources.resource_filename("empdens", "resources/data/japanese_vowels.csv")
-    return pd.read_csv(DATA_PATH)
+    path = resources.files("empdens.resources.data").joinpath("japanese_vowels.csv")
+    assert isinstance(path, Path)
+    return pd.read_csv(path)
 
 
 def load_SHAP_census_data():

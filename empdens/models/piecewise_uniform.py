@@ -117,7 +117,9 @@ class PiecewiseUniform(AbstractDensity):
         ref_crowd_roll = pd.merge_asof(ref_crowd, self.crowd_lookup, on="xval")
         assert isinstance(ref_crowd_roll, pd.DataFrame), "ref_crowd_roll is None"
         assert isinstance(ref_loners, pd.DataFrame), "ref_loners is None"
-        final_ref = pd.concat([ref_loners, ref_crowd_roll], axis=0)
+        frames = [ref_loners, ref_crowd_roll]
+        nonempty_frames = [frame for frame in frames if not frame.empty]
+        final_ref = pd.concat(nonempty_frames, axis=0)
         final_ref["density"] = final_ref.density.fillna(self.oos_density)
         xdf = pd.DataFrame({"xval": x_series.to_numpy(), "order": range(len(X))})
         result = final_ref.merge(xdf, right_on="xval", left_on="xval", how="right").sort_values("order")
