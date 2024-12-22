@@ -4,7 +4,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from empdens import cade, classifiers, evaluation, models, simulators, wrappers
+from empdens import cade, classifiers, evaluation, models, simulators
+from empdens.wrappers.fastKDE import FastKDE
+from empdens.wrappers.sklearn_isolation_forest import SklearnIsolationForest
+from empdens.wrappers.sklearn_kde import SklearnKDE
 
 
 def _build_random_data():
@@ -20,9 +23,9 @@ class Estimators:
         self.simulation = simulators.Zena()
         lgb = classifiers.lightgbm.Lgbm()  # pyright: ignore
         self.estimators = [
-            wrappers.FastKDE(),
-            wrappers.SklearnKDE(),
-            wrappers.SklearnIsolationForest(),
+            FastKDE(),
+            SklearnKDE(),
+            SklearnIsolationForest(),
             cade.Cade(initial_density=models.JointDensity(), classifier=lgb),
         ]
 
