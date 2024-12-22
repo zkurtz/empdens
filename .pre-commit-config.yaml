@@ -17,8 +17,7 @@ repos:
       name: formatting (ruff)
       entry: ruff
       language: system
-      types: [python]
-      args: ['format']
+      types: [python, jupyter]
     - id: ruff-lint
       name: linting (ruff)
       entry: ruff
