@@ -10,7 +10,6 @@ dependencies = [
     "pandas >=0.24.2",
     "psutil>=6.1.0",
     "scikit-learn >=0.20.3",
-    "setuptools>=75.6.0",
     "shmistogram>=0.4.1",
 ]
 
@@ -32,11 +31,23 @@ extras = [
 [tool.uv]
 package = true
 
-[tool.setuptools.package-data]
-"empdens" = ["resources/data/*"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.packages.find]
-include = ["empdens*"]
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
+include = [
+  "empdens/resources/data/*",
+  "empdens/**/*.py",
+]
+
+[tool.hatch.build.targets.wheel]
+ignore-vcs = true
+packages = ["empdens"]
+include = [
+  "empdens/resources/data/*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests",]
