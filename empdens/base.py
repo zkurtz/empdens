@@ -16,11 +16,9 @@ class AbstractDensity(ABC):
     while 'density' accepts a pandas DataFrame where each row is a point
     """
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose: bool = False):
         """Initialize the AbstractDensity class."""
         self.verbose = verbose
-        # Aliases for density:
-        self.predict = self.density
 
     def train(self, df: pd.DataFrame) -> None:
         """A method for defining or updating the self.density function base on data."""
@@ -30,6 +28,10 @@ class AbstractDensity(ABC):
     def density(self, X):
         """Return the density for each row of the pandas DataFrame X as a numpy array."""
         raise Exception("Not yet implemented")
+
+    def predict(self, *args, **kwargs):
+        """Prediction alias for density."""
+        return self.density(*args, **kwargs)
 
     def rvs(self, n: int) -> pd.DataFrame:
         """Returns n samples from the space."""

@@ -1,6 +1,6 @@
 [project]
 name = "empdens"
-version = "1.3.0"
+version = "1.3.1"
 description = "Empirical density estimation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -10,7 +10,8 @@ dependencies = [
     "pandas >=0.24.2",
     "psutil>=6.1.0",
     "scikit-learn >=0.20.3",
-    "shmistogram>=0.4.1",
+    "shmistogram>=0.6.2",
+    "typing-extensions>=4.12.2",
 ]
 
 [dependency-groups]
