@@ -7,10 +7,18 @@ on:
 jobs:
   build:
     name: Test build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
     steps:
     - name: Clone repo
       uses: actions/checkout@v4
+
+    - name: Install libomp
+      if: matrix.os == 'macos-latest'
+      run: brew install libomp
 
     - name: Install uv and set the python version
       uses: astral-sh/setup-uv@v4
@@ -19,8 +27,8 @@ jobs:
         # see https://github.com/tox-dev/tox-uv/issues/110
         python-version: 3.13
 
-    - name: Install tox-uv
-      run: uv tool install tox --with tox-uv
+    - name: Install tox
+      run: uv tool install tox
 
     - name: Run tests with tox
       run: tox

@@ -67,7 +67,8 @@ class PiecewiseUniform(AbstractDensity):
             self._set_null_crowd()
         else:
             self.crowd_multinom = Multinomial()
-            self.crowd_multinom.train(df=self.crowd_bins.freq.to_frame())
+            series = self.crowd_bins.rename(columns={"freq": self.name})[self.name]
+            self.crowd_multinom.train(df=series.to_frame())
             self.crowd_uniforms = [self._uniform(row) for _, row in self.crowd_bins.iterrows()]
             # A density lookup for each member of the crowd (assuming asof backward merge)
             crowd_share = self.loner_crowd_shares[1]
@@ -78,10 +79,14 @@ class PiecewiseUniform(AbstractDensity):
             )
 
     def train(self, df: pd.DataFrame) -> None:
-        """:param series: pandas series of numeric values"""
+        """Train a model.
+
+        Args:
+            df: A single-column data frame.
+        """
         assert df.shape[1] == 1, "Only one-dimensional data is supported"
-        name = df.columns[0]
-        series = df[name]
+        self.name = df.columns[0]
+        series = df[self.name]
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares
         # Loners
@@ -135,15 +140,15 @@ class PiecewiseUniform(AbstractDensity):
         # Sample the loners
         if n_loners > 0:
             assert self.multinomial is not None, "Multinomial not defined"
-            loners = self.multinomial.rvs(n_loners)["values"].to_numpy()
+            loners = self.multinomial.rvs(n_loners)[self.name].to_numpy()
         else:
             loners = np.array([])
         # Sample the crowd
         if n_crowd > 0:
             assert self.crowd_multinom is not None, "Crowd multinomial not defined"
             values_df = self.crowd_multinom.rvs(n_crowd)
-            assert values_df.columns.to_list() == ["values"]
-            bins = values_df["values"].value_counts()
+            assert values_df.columns.to_list() == [self.name]
+            bins = values_df[self.name].value_counts()
             crowd_list = [self.crowd_uniforms[k].rvs(bins.iloc[k]) for k in range(len(bins))]
             crowd = np.array([x for y in crowd_list for x in y])
         else:
@@ -151,4 +156,4 @@ class PiecewiseUniform(AbstractDensity):
         # Shuffle
         data = np.concatenate((loners, crowd))
         np.random.shuffle(data)
-        return pd.DataFrame(data)
+        return pd.Series(data, name=self.name).to_frame()

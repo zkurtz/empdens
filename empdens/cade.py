@@ -9,6 +9,7 @@ from empdens.base import AbstractDensity
 from empdens.classifiers.base import AbstractLearner
 from empdens.classifiers.lightgbm import Lgbm
 from empdens.data import CadeData
+from empdens.utils.pandahandler import Schema, categorize_non_numerics
 
 
 def auc(df):
@@ -47,7 +48,7 @@ class Cade(AbstractDensity):
             verbose: Whether to print diagnostic information.
         """
         super().__init__()
-        self.initial_density = initial_density or models.JointDensity()
+        self.initial_density = initial_density or models.JointDensity(verbose=verbose)
         self.classifier = classifier or Lgbm()
         self.sim_size = sim_size
         self.verbose = verbose
@@ -84,27 +85,20 @@ class Cade(AbstractDensity):
             "auc": auc(val_df),
         }
 
-    def _validate_data(self, data):
-        try:
-            assert isinstance(data, pd.DataFrame)
-        except Exception:
-            raise Exception("the data needs to be a pandas.DataFrame")
-        try:
-            assert isinstance(data.columns[0], str)
-        except Exception:
-            raise Exception("the data column names need to be strings, not " + str(type(data.columns[0])))
-
-    def train(self, df, diagnostics=False):
+    def train(self, df: pd.DataFrame, diagnostics: bool = False):
         """Model the density of the data.
 
         :param df: (pandas DataFrame)
         """
-        self._validate_data(df)
-        self.vp("Training a generative density model on " + str(df.shape[0]) + " samples")
+        df = categorize_non_numerics(df)
+        self.schema = Schema.from_df(df)
+        self.vp(f"Training a generative density model on {len(df)} samples")
         self.initial_density.train(df)
         sim_n = self.compute_simulation_size(df)
-        self.vp("Simulating " + str(sim_n) + " fake samples from the model and join it with the real data")
-        xdf = pd.concat([df, self.initial_density.rvs(sim_n)])
+        self.vp(f"Simulating {sim_n} fake samples from the model and join it with the real data")
+        sim_df = self.initial_density.rvs(sim_n)
+        sim_df = self.schema(sim_df)
+        xdf = pd.concat([df, sim_df], axis=0)
         assert isinstance(xdf, pd.DataFrame), "CadeData.X requires a pandas DataFrame"
         partially_synthetic_data = CadeData(
             X=xdf,
@@ -128,7 +122,7 @@ class Cade(AbstractDensity):
         Args:
             X: Data frame matching the schema of the training data.
         """
-        self._validate_data(X)
+        X = self.schema(X)
         # Initial density estimate
         synthetic_dens = self.initial_density.density(X)
         # Classifier adjustment factor

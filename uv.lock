@@ -526,7 +526,7 @@ wheels = [
 
 [[package]]
 name = "empdens"
-version = "1.2.0"
+version = "1.3.1"
 source = { editable = "." }
 dependencies = [
     { name = "lightgbm" },
@@ -535,6 +535,7 @@ dependencies = [
     { name = "psutil" },
     { name = "scikit-learn" },
     { name = "shmistogram" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -560,7 +561,8 @@ requires-dist = [
     { name = "pandas", specifier = ">=0.24.2" },
     { name = "psutil", specifier = ">=6.1.0" },
     { name = "scikit-learn", specifier = ">=0.20.3" },
-    { name = "shmistogram", specifier = ">=0.4.1" },
+    { name = "shmistogram", specifier = ">=0.6.2" },
+    { name = "typing-extensions", specifier = ">=4.12.2" },
 ]
 
 [package.metadata.requires-dev]
@@ -2283,7 +2285,7 @@ wheels = [
 
 [[package]]
 name = "shmistogram"
-version = "0.4.1"
+version = "0.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -2292,9 +2294,9 @@ dependencies = [
     { name = "pandas" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bc/36/503e84858e321804906449553aa6cedad2eec12bbf0b069408a2c878a230/shmistogram-0.4.1.tar.gz", hash = "sha256:d18f22d29b0d42634b7cf7a2ce71759ab44623250f5b6ad2f0c12aa33b087547", size = 19850 }
+sdist = { url = "https://files.pythonhosted.org/packages/e3/4e/3ca3479f2688f4d9d9acff07927ab4e292138f86dbd47148cbef69aaf4f1/shmistogram-0.6.2.tar.gz", hash = "sha256:b9f0c43901c086626bb271c941bbadb6d663a3e4b8b5e9b119b698506de1b739", size = 15960 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/1d/d0a9ef702dd8d6101043b5581492a6ecd06fcf2723515121debc97e56010/shmistogram-0.4.1-py3-none-any.whl", hash = "sha256:35b1cc7f56bc5f61be903d71220e7571ea5b36e721ab8c2a8e163ad956522776", size = 20366 },
+    { url = "https://files.pythonhosted.org/packages/15/df/0b715cb082a53514524374cb8f53d3ec5446051beb77bddac4760ff50328/shmistogram-0.6.2-py3-none-any.whl", hash = "sha256:037e8d22b8d5e6d5e5d7afe211bafbd8da4a11222027586bf542fe316f0b5822", size = 20193 },
 ]
 
 [[package]]
