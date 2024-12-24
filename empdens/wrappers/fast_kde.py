@@ -1,10 +1,10 @@
 """Wrapper for fastKDE package."""
 
-import warnings
 from typing import Any
 
 import numpy as np
 import pandas as pd
+from fastkde import fastKDE
 from scipy import interpolate
 
 from empdens.base import AbstractDensity
@@ -50,7 +50,16 @@ class Interpolator:
         Returns:
             Interpolated values at the positions `x` based on the `self.values` observed over the `self.grid`.
         """
-        return interpolate.griddata(self.positions, self.values, x, **self.params)
+        interp = interpolate.griddata(
+            points=self.positions,
+            values=self.values,
+            xi=x,
+            **self.params,
+        )
+        if len(interp.shape) > 1:
+            assert interp.shape[1] == 1, "Interpolation should return a single column"
+            return interp[:, 0]
+        return interp
 
 
 class FastKDE(AbstractDensity):
@@ -62,28 +71,10 @@ class FastKDE(AbstractDensity):
         Args:
             params: Additional named arguments to be passed to `fastkde.fastKDE
         """
-        self._load_fastKDE()
         super().__init__()
         self.params = defaults()
         if params is not None:
             self.params.update(params)
-
-    def _load_fastKDE(self) -> None:
-        """Load the fastKDE package."""
-        try:
-            from fastkde import fastKDE
-        except Exception as err:
-            raise Exception("""
-                You need to install fastKDE first.
-                We recommend installing from source due to
-                https://bitbucket.org/lbl-cascade/fastkde/issues/5/using-a-non-tuple-sequence-for
-
-                To install fastKDE from source, do
-                (1) `pip install cython`
-                (2) `pip install numpy`
-                (3) `pip install git+https://bitbucket.org/lbl-cascade/fastkde.git#egg=fastkde`
-            """) from err
-        self.fastKDE = fastKDE
 
     def train(self, df: pd.DataFrame) -> None:
         """Train the density estimator on the given data.
@@ -94,12 +85,10 @@ class FastKDE(AbstractDensity):
         Args:
             df: Numeric features.
         """
-        with warnings.catch_warnings():
-            msg = "Using a non-tuple sequence for multidimensional indexing is deprecated"
-            warnings.filterwarnings("ignore", message=msg)
-            fkde = self.fastKDE.pdf(*[df[col].to_numpy() for col in df], **self.params)
-            grid = fkde.data
-            axes = [getattr(fkde, dim_name).to_numpy() for dim_name in fkde.dims]
+        assert isinstance(df, pd.DataFrame), "FastKDE requires a pandas DataFrame"  # noqa: F821
+        fkde = fastKDE.pdf(*[df[col].to_numpy() for col in df], **self.params)
+        grid = fkde.data
+        axes = [getattr(fkde, dim_name).to_numpy() for dim_name in fkde.dims]
         self.interpolator = Interpolator(grid, axes)
 
     def density(self, X: pd.DataFrame) -> np.ndarray:
