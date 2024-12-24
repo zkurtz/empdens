@@ -72,6 +72,6 @@ class BartSimpson(AbstractDensity):
     def plot(self, n: int = 200, xlims: list[float | int] = [-2, 2]) -> None:
         """Plot the density."""
         dfg = pd.DataFrame({"x": np.linspace(xlims[0], xlims[1], n)})
-        dfg["generative density"] = self.density(dfg.x.values)
+        dfg["generative density"] = self.density(dfg)
         ax = dfg.plot(x="x", y="generative density")
         ax.get_legend().remove()
