@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from pandahandler import Schema, categorize_non_numerics
 from sklearn import metrics
 
 from empdens import models
@@ -9,7 +10,6 @@ from empdens.base import AbstractDensity
 from empdens.classifiers.base import AbstractLearner
 from empdens.classifiers.lightgbm import Lgbm
 from empdens.data import CadeData
-from empdens.utils.pandahandler import Schema, categorize_non_numerics
 
 
 def auc(df):

@@ -21,13 +21,11 @@ class Lgbm(AbstractLearner):
     def __init__(
         self,
         params: dict[str, Any] | None = None,
-        categorical_features: list[str] | None = None,
         verbose: bool = False,
     ) -> None:
         """Initializes the LightGBM model."""
         super().__init__(params, verbose)
         self.nround = self.params.pop("num_boost_round")
-        self.categorical_features = categorical_features
 
     def default_params(self):
         """Returns the default parameters for the LightGBM model.
@@ -65,6 +63,7 @@ class Lgbm(AbstractLearner):
             lgb.Dataset: The LightGBM Dataset.
         """
         self.features = data.X.columns.tolist()
+        self.categorical_features = data.X.select_dtypes(include=["category"]).columns.tolist()
         self._parse_categoricals()
         return lgb.Dataset(
             data.X,
