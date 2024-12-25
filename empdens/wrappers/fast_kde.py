@@ -58,7 +58,13 @@ class Interpolator:
         )
         if len(interp.shape) > 1:
             assert interp.shape[1] == 1, "Interpolation should return a single column"
-            return interp[:, 0]
+            interp = interp[:, 0]
+        # # The interpolator is evidently incapable of extrapolation; we get null values for points outside the grid.
+        # exmax = (x > self.positions.max(axis=0)).max(axis=1)
+        # exmin = (x < self.positions.min(axis=0)).max(axis=1)
+        # assert not (set(np.where(np.isnan(interp))[0]) - set(np.where(exmax | exmin)[0]))
+        # So let's fill null values with half the minimum value
+        interp[np.isnan(interp)] = np.nanmin(interp) / 2
         return interp
 
 
@@ -88,7 +94,7 @@ class FastKDE(AbstractDensity):
         assert isinstance(df, pd.DataFrame), "FastKDE requires a pandas DataFrame"  # noqa: F821
         fkde = fastKDE.pdf(*[df[col].to_numpy() for col in df], **self.params)
         grid = fkde.data
-        axes = [getattr(fkde, dim_name).to_numpy() for dim_name in fkde.dims]
+        axes = [getattr(fkde, dim_name).to_numpy() for dim_name in reversed(fkde.dims)]
         self.interpolator = Interpolator(grid, axes)
 
     def density(self, X: pd.DataFrame) -> np.ndarray:

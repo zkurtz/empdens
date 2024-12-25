@@ -8,7 +8,10 @@ from empdens.base import AbstractDensity
 
 
 class Zena(AbstractDensity):
-    """Zena (arbitrary name) -- a bivariate data simulator."""
+    """A simple bivariate data simulator.
+
+    This use two independent distributions, a Gaussian and a triangular distribution.
+    """
 
     def __init__(self):
         """Initialize the bivariate data simulator."""
@@ -16,11 +19,8 @@ class Zena(AbstractDensity):
         self.gauss = stats.truncnorm(-2, 4)
         self.triang = stats.triang(0, 0, 3)
 
-    def rvs(self, n):
-        """Simulate a simple bivariate density.
-
-        The density is 2-dimensional with a discontinuous covariance structure
-        """
+    def rvs(self, n: int) -> pd.DataFrame:
+        """Simulate draws from the joint distribution."""
         return pd.DataFrame({"gaussian": self.gauss.rvs(size=n), "triangular": self.triang.rvs(size=n)})
 
     def density(self, X: pd.DataFrame) -> np.ndarray:

@@ -77,13 +77,12 @@ def test_evaluation():
     ev = evaluation.Evaluation(estimators=estimators.densities(), truth=generative_density(df))
     expected_output = pd.DataFrame(
         {
-            # Likely a bug in our FastKDE results, TODO replace values soon:
             "FastKDE": {
-                "mean_absolute_error": np.nan,
-                "mean_squared_error": np.nan,
-                "rank-order correlation": -0.01761744798555229,
-                "pearson correlation": -0.10682829357089972,
-                "mean density": np.nan,
+                "mean_absolute_error": 0.017839340471659436,
+                "mean_squared_error": 0.0007697280337532455,
+                "rank-order correlation": 0.9525405805674115,
+                "pearson correlation": 0.9393207787944629,
+                "mean density": 0.11658864131600007,
             },
             "SklearnKDE": {
                 "mean_absolute_error": 0.06530592283410162,
@@ -100,20 +99,19 @@ def test_evaluation():
                 "mean density": 0.5125398482700011,
             },
             "Cade": {
-                "mean_absolute_error": 0.041584532544338915,
-                "mean_squared_error": 0.003844187768933896,
-                "rank-order correlation": 0.8466874306037507,
-                "pearson correlation": 0.8117171278053115,
-                "mean density": 0.15375413274770683,
+                "mean_absolute_error": 0.6859270924805501,
+                "mean_squared_error": 0.9127381923442783,
+                "rank-order correlation": 0.8645335036691795,
+                "pearson correlation": 0.8428912746657217,
+                "mean density": 0.8112451568849589,
             },
         }
     )
     df = ev.evaluate()
-    del expected_output
-    # pd.testing.assert_frame_equal(
-    #     df[expected_output.columns],
-    #     expected_output,
-    #     # TODO: set all the random seeds properly and try to get this more precise
-    #     check_exact=False,
-    #     atol=1e-1,
-    # )
+    pd.testing.assert_frame_equal(
+        df[expected_output.columns],
+        expected_output,
+        # TODO: set all the random seeds properly and try to get this more precise
+        check_exact=False,
+        atol=1e-1,
+    )
