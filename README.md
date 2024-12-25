@@ -1,7 +1,6 @@
-# empdens, empirical density estimation in python
+# Empirical density estimation in python
 
-**empdens** provides a unified interface to several density estimation packages,
-including an implementation of
+**empdens** provides a unified interface to several density estimation packages, including an implementation of
 [classifier-adjusted density
 estimation](https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf).
 Examples include
@@ -10,20 +9,11 @@ Examples include
 - [Modest performance on an anomaly detection benchmark](https://nbviewer.jupyter.org/github/zkurtz/empdens/blob/main/notebooks/vowels.ipynb)
 
 Applications of density estimation include
-- **Detecting data drift**: The reliability of a trained model's prediction at a new data point
-depends on the similarity between the new point and the training data. A
-density function trained on the training data can serve as a warning of data drift
-if the evaluated density at the new point is exceptionally low. One way to focus such an
-analysis is to train and evaluate the density using only several of the most-important
+- **Detecting data drift**: The reliability of a trained model's prediction at a new data point depends on the similarity between the new point and the training data. A density function trained on the training data can serve as a warning of data drift if the evaluated density at the new point is exceptionally low. One way to focus such an analysis is to train and evaluate the density using only several of the most-important
 features in the model.
-- **Mode detection**: Locating regions of high density is a first step to efficiently
-allocate resources to address an epidemic, market a product, etc.
-- **Feature engineering**: The density at a point with respect to any
-subset of the dimensions of a feature space can encode useful information.
-- **Anomaly/novelty/outlier detection**: A "point of low density"
-is a common working definition of "anomaly", although it's not the only one.
-(In astrostatistics, for example,
- a density spike may draw attention as a possible galaxy.)
+- **Mode detection**: Locating regions of high density is a first step to efficiently allocate resources to address an epidemic, market a product, etc.
+- **Feature engineering**: The density at a point with respect to any subset of the dimensions of a feature space can encode useful information.
+- **Anomaly/novelty/outlier detection**: A "point of low density" is a common working definition of "anomaly", although it's not the only one. (In astrostatistics, for example, a density spike may draw attention as a possible galaxy.)
 
 Evaluating the performance of a density estimator is not straightforward. We rely on a
 mix of simulation, real-data sanity checks, and cross-validation in special cases,
@@ -65,9 +55,7 @@ Tutorials, starting with
 - density estimation trees
 
 Density estimation:
-- Implement a dimensionality-reduction pre-processing method. Extreme multicolinearly
-is a potential failure mode in CADE because the classifier can trivially distinguish
-fake data from real since the fake data model assumes feature independence.
+- Implement a dimensionality-reduction pre-processing method. Extreme multicolinearly is a potential failure mode in CADE because the classifier can trivially distinguish fake data from real since the fake data model assumes feature independence.
 - Merge the best of the tree-based methods of LightGBM,
 [detpack](https://cran.r-project.org/web/packages/detpack/index.html),
 [Schmidberger and Frank](https://link.springer.com/content/pdf/10.1007/11564126_26.pdf),
