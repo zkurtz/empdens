@@ -22,10 +22,10 @@ def test_cade():
     cade.train(pd.DataFrame(data), diagnostics=True)
     diagnostics = cade.diagnostics
 
-    assert all([x in diagnostics.keys() for x in ["val_df", "auc"]])
+    assert all([x in diagnostics.keys() for x in ["val_df", "auroc"]])
     df = diagnostics["val_df"]
     assert df.shape[0] == 2 * N
-    auc = diagnostics["auc"]
+    auc = diagnostics["auroc"]
     assert isinstance(auc, float)
     assert auc >= 0
     assert auc <= 1

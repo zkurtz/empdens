@@ -50,7 +50,7 @@ class PiecewiseUniform(AbstractDensity):
             self.multinomial = None
         else:
             m = Multinomial()
-            m.train(loners.df)
+            m.train_from_seriestable(loners)
             self.multinomial_df = self.loner_crowd_shares[0] * m.df[["density"]]
             self.multinomial = m
 
@@ -86,6 +86,8 @@ class PiecewiseUniform(AbstractDensity):
         """
         assert df.shape[1] == 1, "Only one-dimensional data is supported"
         self.name = df.columns[0]
+        # if self.name == "Education-Num":
+        #     breakpoint()
         series = df[self.name]
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares

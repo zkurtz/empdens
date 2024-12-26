@@ -85,8 +85,7 @@ class Lgbm(AbstractLearner):
             train_set=ld,
             num_boost_round=self.nround,
         )
-        tdiff = str(round(time() - t0))
-        self.vp("LightGBM training took " + tdiff + " seconds")
+        self.vp(f"LightGBM training took {round(time() - t0)} seconds")
 
     def predict(self, X) -> np.ndarray:
         """Predicts the target values using the trained LightGBM model.
