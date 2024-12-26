@@ -11,11 +11,41 @@ from empdens.classifiers.base import AbstractLearner
 from empdens.classifiers.lightgbm import Lgbm
 from empdens.data import CadeData
 
+AUROC = "auroc"
+PRED = "pred"
+TRUTH = "truth"
 
-def auc(df):
-    """Compute the area under the ROC curve."""
-    fpr, tpr, _ = metrics.roc_curve(df.truth.values, df.pred.values, pos_label=1)
+
+def auroc(df):
+    """Compute the area under the ROC curve.
+
+    Args:
+        df: Data frame containing columns `truth` and `pred`.
+    """
+    fpr, tpr, _ = metrics.roc_curve(df[TRUTH].to_numpy(), df[PRED].to_numpy(), pos_label=1)
     return metrics.auc(fpr, tpr)
+
+
+def compute_simulation_size(n_real: int) -> int:
+    """Determine the number of synthetic data samples to simulate.
+
+    Typically, the larger the simulation size, the more accurate the density estimate. However, we also want to
+    be concious of the computational cost. Consider two extremes:
+     - Data are extremely small, <100 rows. Then we can easily simulate 100x the data size.
+     - Data are large, >100k rows. We can typically afford to match the data size but not much more than that.
+    To achieve a smooth continuum between these two extremes, we simulate (1.0 + extra) times the data size, where
+    `extra > 0` and decreases as the data size increases. Specifically, we define
+    `extra = 100 / sqrt(data size)`. Examples:
+        - 100 rows -> extra = 100 / 10 = 10 -> 1100 simulated rows
+        - 10000 rows -> extra = 100 / 100 = 1 -> 20000 simulated rows
+        - 1000000 rows -> extra = 100 / 1000 = 0.1 -> 1001000 simulated rows
+
+    Args:
+        n_real: Number of real data samples.
+    """
+    extra = 100 / np.sqrt(n_real)
+    approx_size = (1.0 + extra) * n_real
+    return round(approx_size)
 
 
 class Cade(AbstractDensity):
@@ -31,7 +61,7 @@ class Cade(AbstractDensity):
         self,
         initial_density: AbstractDensity | None = None,
         classifier: AbstractLearner | None = None,
-        sim_size: str | int = "auto",
+        sim_size: int | None = None,
         verbose: bool = False,
     ):
         """Initialize the classifier-adjusted density estimation model.
@@ -53,48 +83,26 @@ class Cade(AbstractDensity):
         self.sim_size = sim_size
         self.verbose = verbose
 
-    def compute_simulation_size(self, df):
-        """Determine the number of synthetic data samples to simulate.
-
-        If self.sim_size is 'auto', sets the simulation size as the geometric mean
-        between the data size and self.simulation_size_attractor
-
-        If self.sim_size is a positive number less than 100, simulation size is
-        round(self.sim_size)*df.shape[0]
-
-        Finally, if self.sim_size >= 100, simulation size is round(self.sim_size)
-        """
-        n_real = df.shape[0]
-        if isinstance(self.sim_size, str):
-            assert self.sim_size == "auto"
-            sim_n = np.sqrt(n_real * self.simulation_size_attractor)
-        elif self.sim_size < 100:
-            assert self.sim_size > 0
-            sim_n = round(self.sim_size * n_real)
-            if sim_n < 10:
-                raise Exception("Simulation size is very small. Consider using a larger value of sim_size")
-        else:
-            sim_n = round(self.sim_size)
-        self.sim_rate = sim_n / df.shape[0]
-        return int(sim_n)
-
     def _diagnostics(self, x, truth):
-        val_df = pd.DataFrame({"pred": self.classifier.predict(x), "truth": truth})
+        val_df = pd.DataFrame({PRED: self.classifier.predict(x), TRUTH: truth})
         self.diagnostics = {
             "val_df": val_df,
-            "auc": auc(val_df),
+            AUROC: auroc(val_df),
         }
 
     def train(self, df: pd.DataFrame, diagnostics: bool = False):
         """Model the density of the data.
 
-        :param df: (pandas DataFrame)
+        Args:
+            df: Data frame containing the training data.
+            diagnostics: Whether to compute and store diagnostic information.
         """
         df = categorize_non_numerics(df)
         self.schema = Schema.from_df(df)
         self.vp(f"Training a generative density model on {len(df)} samples")
         self.initial_density.train(df)
-        sim_n = self.compute_simulation_size(df)
+        sim_n = self.sim_size or compute_simulation_size(n_real=len(df))
+        self.sim_rate = sim_n / len(df)
         self.vp(f"Simulating {sim_n} fake samples from the model and join it with the real data")
         sim_df = self.initial_density.rvs(sim_n)
         sim_df = self.schema(sim_df)
@@ -106,21 +114,18 @@ class Cade(AbstractDensity):
         )
         self.vp("Train the classifier to distinguish real from fake")
         self.classifier.train(partially_synthetic_data)
-        if diagnostics:
+        if diagnostics or self.verbose:
             self._diagnostics(partially_synthetic_data.X, partially_synthetic_data.y)
         if self.verbose:
-            if not hasattr(self, "diagnostics"):
-                self._diagnostics(partially_synthetic_data.X, partially_synthetic_data.y)
-            AUROC = str(round(self.diagnostics["auc"], 3))
-            print("In-sample, the classifier had AUROC = " + AUROC)
+            print(f"In-sample, the classifier had AUROC = {round(self.diagnostics[AUROC], 3)}")
 
-    def density(self, X):
+    def density(self, X: pd.DataFrame) -> np.ndarray:
         """Predict the density at new points.
 
         Apply equation 2.1 in https://pdfs.semanticscholar.org/e4e6/033069a8569ba16f64da3061538bcb90bec6.pdf
 
         Args:
-            X: Data frame matching the schema of the training data.
+            X: Data frame that can be coerced to match the schema of the training data.
         """
         X = self.schema(X)
         # Initial density estimate

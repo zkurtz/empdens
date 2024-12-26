@@ -65,7 +65,7 @@ def test_cade():
     lgb = classifiers.lightgbm.Lgbm()  # pyright: ignore
     cc = cade.Cade(initial_density=models.JointDensity(), classifier=lgb)
     cc.train(df, diagnostics=True)
-    assert cc.diagnostics["auc"] == 0.9112022454142947
+    assert cc.diagnostics["auroc"] == 0.9111558145122537
 
 
 # @pytest.mark.skip(reason="To much refactoring happening now")
