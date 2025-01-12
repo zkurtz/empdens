@@ -1,25 +1,27 @@
 """Evaluation of binary predictions."""
 
+from dataclasses import dataclass
+
 import numpy as np
+import pandas as pd
 from sklearn import metrics
 
 
-class Binary(object):
+@dataclass
+class Binary:
     """A collection of metrics for the strength of association between two vectors in [0,1]."""
 
-    def __init__(self, truth, pred):
-        """Initialize the Binary object."""
-        assert len(truth) == len(pred)
-        assert isinstance(truth, np.ndarray)
-        assert isinstance(pred, np.ndarray)
-        self.truth = truth
-        self.pred = pred
-        self.metrics = {
-            "auroc": self.AUROC
-            # 'rank-order correlation': self.rank_order_correlation,
-            # 'pearson correlation': self.pearson_correlation
-        }
+    truth: np.ndarray
+    pred: np.ndarray
 
+    @property
     def AUROC(self):
         """Area under the receiver-operator characteristic curve."""
-        return metrics.roc_auc_score(y_true=self.truth, y_score=self.pred)
+        value = metrics.roc_auc_score(y_true=self.truth, y_score=self.pred)
+        return float(value)
+
+    @property
+    def rank_order_corr(self) -> float:
+        """Rank-order correlation."""
+        value = pd.Series(self.truth).corr(pd.Series(self.pred), method="spearman")
+        return float(value)

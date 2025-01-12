@@ -11,22 +11,7 @@ from shmistogram.binners.bayesblocks import BayesianBlocks
 
 from empdens.base import AbstractDensity
 from empdens.models.multinomial import Multinomial
-
-
-def _get_loners(shm: shmist.Shmistogram, name: str) -> Tabulation:
-    """Extract loners from a shmistogram object.
-
-    Expect this function to disappear soon, as a future version of shmistogram will expose the tabulation object
-    directly.
-    """
-    counts_series = shm.loners.df["n_obs"]
-    assert isinstance(counts_series, pd.Series), "Expected a series"
-    return Tabulation(
-        counts=counts_series,
-        n_values=shm.loners.df.n_obs.sum(),
-        n_distinct=shm.loners.df.shape[0],
-        name=name,
-    )
+from empdens.names import DENSITY, LB, UB, XVAL
 
 
 class PiecewiseUniform(AbstractDensity):
@@ -73,7 +58,7 @@ class PiecewiseUniform(AbstractDensity):
 
     def _set_null_crowd(self):
         self.crowd_uniforms = []
-        self.crowd_lookup = pd.DataFrame({"xval": [], "density": []})
+        self.crowd_lookup = pd.DataFrame({XVAL: [], DENSITY: []})
 
     def _train_crowd(self, crowd_bins):
         self.crowd_bins = crowd_bins
@@ -89,10 +74,10 @@ class PiecewiseUniform(AbstractDensity):
             self.crowd_uniforms = [self._uniform(row) for _, row in self.crowd_bins.iterrows()]
             # A density lookup for each member of the crowd (assuming asof backward merge)
             crowd_share = self.loner_crowd_shares[1]
-            lookup = self.crowd_bins[["lb"]].rename(columns={"lb": "xval"})
-            lookup["density"] = crowd_share * self.crowd_bins.rate / self.crowd_bins.freq.sum()
+            lookup = self.crowd_bins[[LB]].rename(columns={LB: XVAL})
+            lookup[DENSITY] = crowd_share * self.crowd_bins.rate / self.crowd_bins.freq.sum()
             self.crowd_lookup = pd.concat(
-                [lookup, pd.DataFrame({"xval": self.crowd_bins[["ub"]].max().values, "density": [np.nan]})], sort=True
+                [lookup, pd.DataFrame({XVAL: self.crowd_bins[[UB]].max().values, DENSITY: [np.nan]})], sort=True
             )
 
     def train(self, df: pd.DataFrame) -> None:
@@ -108,8 +93,7 @@ class PiecewiseUniform(AbstractDensity):
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares
         # Loners
-        _loners = _get_loners(shm, name=self.name)
-        self._train_loners(_loners)
+        self._train_loners(shm.loners)
         # Crowd
         self._train_crowd(shm.bins)
         # Define density for out-of-sample obs as half the min observed density:
@@ -124,31 +108,34 @@ class PiecewiseUniform(AbstractDensity):
             raise ValueError("Only one-dimensional data is supported")
         x_series = X.iloc[:, 0]
         # Identify the unique values for which densities are needed
-        ref = pd.DataFrame({"xval": x_series.unique()})
+        ref = pd.DataFrame({XVAL: x_series.unique()})
         if self.multinomial is not None:
             # Look up each loner in the multinomial levels; those with no match will be
             #   treated as members of the crowd
             assert RATE in self.multinomial_df, "`rate` column not in self.multinomial_df"
-            ref = ref.merge(self.multinomial_df, left_on="xval", right_index=True, how="left")
+            ref = ref.merge(self.multinomial_df, left_on=XVAL, right_index=True, how="left")
             is_crowd = np.isnan(ref[RATE])
-            ref_loners = ref.loc[~is_crowd].copy()
+            ref_loners = ref.loc[~is_crowd].rename(columns={RATE: DENSITY})
             ref_crowd = ref.loc[is_crowd].drop(RATE, axis=1)
         else:
-            ref_loners = pd.DataFrame(columns=pd.Index(["xval"]))
+            ref_loners = pd.DataFrame(columns=pd.Index([XVAL]))
             ref_crowd = ref
-        ref_crowd = ref_crowd.sort_values(by="xval")  # pyright: ignore
+        ref_crowd = ref_crowd.sort_values(by=XVAL)  # pyright: ignore
         ref_crowd = ref_crowd.reset_index(drop=True)
         if self.crowd_lookup.xval.dtype == "float64":
             ref_crowd.xval = ref_crowd.xval.astype("float64")
-        ref_crowd_roll = pd.merge_asof(ref_crowd, self.crowd_lookup, on="xval")
+        ref_crowd_roll = pd.merge_asof(ref_crowd, self.crowd_lookup, on=XVAL)
         assert isinstance(ref_crowd_roll, pd.DataFrame), "ref_crowd_roll is None"
         assert isinstance(ref_loners, pd.DataFrame), "ref_loners is None"
         frames = [ref_loners, ref_crowd_roll]
         nonempty_frames = [frame for frame in frames if not frame.empty]
+        if len(nonempty_frames) > 1:
+            assert len(nonempty_frames) == 2, "Expected at most 2 nonempty frames"
+            assert nonempty_frames[0].columns.equals(nonempty_frames[1].columns), "Mismatch in columns"
         final_ref = pd.concat(nonempty_frames, axis=0)
-        final_ref["density"] = final_ref.density.fillna(self.oos_density)
-        xdf = pd.DataFrame({"xval": x_series.to_numpy(), "order": range(len(X))})
-        result = final_ref.merge(xdf, right_on="xval", left_on="xval", how="right").sort_values("order")
+        final_ref[DENSITY] = final_ref.density.fillna(self.oos_density)
+        xdf = pd.DataFrame({XVAL: x_series.to_numpy(), "order": range(len(X))})
+        result = final_ref.merge(xdf, right_on=XVAL, left_on=XVAL, how="right").sort_values("order")
         assert result.shape[0] == len(X), "Mismatch in length"
         return result.density.to_numpy()
 
