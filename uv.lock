@@ -526,7 +526,7 @@ wheels = [
 
 [[package]]
 name = "empdens"
-version = "1.4.3"
+version = "1.4.4"
 source = { editable = "." }
 dependencies = [
     { name = "lightgbm" },
@@ -563,7 +563,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=0.24.2" },
     { name = "psutil", specifier = ">=6.1.0" },
     { name = "scikit-learn", specifier = ">=0.20.3" },
-    { name = "shmistogram", specifier = "==0.6.3" },
+    { name = "shmistogram", specifier = ">=1.0.0" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
 ]
 
@@ -2302,18 +2302,19 @@ wheels = [
 
 [[package]]
 name = "shmistogram"
-version = "0.6.3"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "astropy", version = "7.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "matplotlib" },
+    { name = "pandahandler" },
     { name = "pandas" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/95/5b/b950400adb10b061a233ca684ef93a73b354171373aae490a56c030a46de/shmistogram-0.6.3.tar.gz", hash = "sha256:3796c0c645442156288faf7c345e329cc5095d7afb4c128f1dbba37cfacfbdba", size = 16035 }
+sdist = { url = "https://files.pythonhosted.org/packages/3e/ac/8489c203f420856ed4bc82ff12f19b4483ba92404d334cb887e15af2e744/shmistogram-1.0.0.tar.gz", hash = "sha256:a4d1a1950f1cf54f09a39761bdb7cbf5c14a20e1fad9d88226e5551f9d0ee8cc", size = 15224 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/55/fb/21e87edbcc3b40bbbf4431643ee9f093beb13d4da3469f3072e57e826e9c/shmistogram-0.6.3-py3-none-any.whl", hash = "sha256:8e5f702679f5f25d34034e62feae272262c10f12d2aecaf9a341ca3ae0c7140e", size = 20299 },
+    { url = "https://files.pythonhosted.org/packages/cb/3d/b85ce3ab2c6c0161fdae346ffeb849f56dae4a706f1cc83f50333f1ab30d/shmistogram-1.0.0-py3-none-any.whl", hash = "sha256:4de06122d0e241b2a94518c7cc8866c721aa2050d30645fa66c738e6542cf078", size = 19309 },
 ]
 
 [[package]]
