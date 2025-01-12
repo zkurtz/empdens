@@ -1,14 +1,32 @@
 """Piecewise uniform density estimator."""
 
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import shmistogram as shmist
+from pandahandler.tabulation import RATE, Tabulation
 from scipy import stats
 from shmistogram.binners.bayesblocks import BayesianBlocks
-from shmistogram.tabulation import SeriesTable
 
 from empdens.base import AbstractDensity
 from empdens.models.multinomial import Multinomial
+
+
+def _get_loners(shm: shmist.Shmistogram, name: str) -> Tabulation:
+    """Extract loners from a shmistogram object.
+
+    Expect this function to disappear soon, as a future version of shmistogram will expose the tabulation object
+    directly.
+    """
+    counts_series = shm.loners.df["n_obs"]
+    assert isinstance(counts_series, pd.Series), "Expected a series"
+    return Tabulation(
+        counts=counts_series,
+        n_values=shm.loners.df.n_obs.sum(),
+        n_distinct=shm.loners.df.shape[0],
+        name=name,
+    )
 
 
 class PiecewiseUniform(AbstractDensity):
@@ -24,7 +42,8 @@ class PiecewiseUniform(AbstractDensity):
         self,
         alpha: float | None = None,
         loner_min_count: int = 20,
-        binner=None,
+        # TODO: Narrow down this type a bit; no abstract base class exists yet
+        binner: Any | None = None,
         verbose: int = 0,
     ) -> None:
         """Initialize the piecewise uniform density estimator.
@@ -38,21 +57,19 @@ class PiecewiseUniform(AbstractDensity):
         super().__init__()
         self.alpha = alpha
         self.loner_min_count = loner_min_count
-        if binner is None:
-            self.binner = BayesianBlocks({"sample_size": 10000})
+        self.binner = binner or BayesianBlocks({"sample_size": 10000})
         self.verbose = verbose
 
     def _uniform(self, bin):
         return stats.uniform(bin.lb, bin.ub - bin.lb)
 
-    def _train_loners(self, loners: SeriesTable) -> None:
-        if loners.n == 0:
+    def _train_loners(self, loners: Tabulation) -> None:
+        if loners.n_values == 0:
             self.multinomial = None
         else:
-            m = Multinomial()
-            m.train_from_seriestable(loners)
-            self.multinomial_df = self.loner_crowd_shares[0] * m.df[["density"]]
-            self.multinomial = m
+            self.multinomial = Multinomial()
+            self.multinomial.train_from_tabulation(loners)
+            self.multinomial_df = self.loner_crowd_shares[0] * self.multinomial.counts.rates.to_frame()
 
     def _set_null_crowd(self):
         self.crowd_uniforms = []
@@ -86,19 +103,19 @@ class PiecewiseUniform(AbstractDensity):
         """
         assert df.shape[1] == 1, "Only one-dimensional data is supported"
         self.name = df.columns[0]
-        # if self.name == "Education-Num":
-        #     breakpoint()
+        assert isinstance(self.name, str), "Expected a string"
         series = df[self.name]
         shm = shmist.Shmistogram(series, binner=self.binner)
         self.loner_crowd_shares = shm.loner_crowd_shares
         # Loners
-        self._train_loners(shm.loners)
+        _loners = _get_loners(shm, name=self.name)
+        self._train_loners(_loners)
         # Crowd
         self._train_crowd(shm.bins)
         # Define density for out-of-sample obs as half the min observed density:
         mmin = np.inf
         if self.multinomial is not None:
-            mmin = self.multinomial_df.density.min()
+            mmin = self.multinomial_df[RATE].min()
         self.oos_density = min(mmin, self.crowd_lookup.density.min(), 1 / shm.n_obs) / 2
 
     def density(self, X: pd.DataFrame) -> np.ndarray:
@@ -111,10 +128,11 @@ class PiecewiseUniform(AbstractDensity):
         if self.multinomial is not None:
             # Look up each loner in the multinomial levels; those with no match will be
             #   treated as members of the crowd
+            assert RATE in self.multinomial_df, "`rate` column not in self.multinomial_df"
             ref = ref.merge(self.multinomial_df, left_on="xval", right_index=True, how="left")
-            is_crowd = np.isnan(ref.density)
-            ref_loners = ref[~is_crowd].copy()
-            ref_crowd = ref[is_crowd].drop("density", axis=1)
+            is_crowd = np.isnan(ref[RATE])
+            ref_loners = ref.loc[~is_crowd].copy()
+            ref_crowd = ref.loc[is_crowd].drop(RATE, axis=1)
         else:
             ref_loners = pd.DataFrame(columns=pd.Index(["xval"]))
             ref_crowd = ref

@@ -4,7 +4,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from shmistogram.tabulation import SeriesTable, tabulate
+from pandahandler.tabulation import Tabulation, tabulate
 
 from empdens.base import AbstractDensity
 
@@ -15,20 +15,19 @@ LEVELS = "levels"
 class Multinomial(AbstractDensity):
     """Model a single categorical feature."""
 
-    def _train_by_accepting_params(self, counts, values=None):
-        self.df = pd.DataFrame({"n_obs": counts})
-        if values is not None:
-            self.df.index = values
+    def train_from_tabulation(self, counts: Tabulation) -> None:
+        """Train the model from a tabulation.
 
-    def train_from_seriestable(self, st: SeriesTable):
-        """Train the model from a SeriesTable."""
-        assert st.df.shape[0] > 0
-        self.name = st.name
-        self.df = st.df
-        reg_counts = self.df.n_obs.to_numpy() + 1
-        self.df[DENSITY] = reg_counts / reg_counts.sum()
+        Args:
+            counts: A tabulation of the distinct values.
+        """
+        self.counts = counts
+        if self.counts.n_distinct < 1:
+            raise ValueError("No distinct values in the tabulation")
+        _inflated_counts = self.counts.counts + 1
+        self.regularized_rates = _inflated_counts / _inflated_counts.sum()
         # Assign a tiny prob for never-before observed values of this multinomial:
-        self.out_of_sample_dens = 1 / (2 * self.df.n_obs.sum())
+        self.out_of_sample_rate = 1 / (2 * self.counts.n_values)
 
     def train(self, df: pd.DataFrame):
         """Specify at least series or counts but not both.
@@ -39,16 +38,15 @@ class Multinomial(AbstractDensity):
         if df.shape[1] > 1:
             raise Exception("Only one-dimensional data is supported")
         series = df[df.columns[0]]
-        # if series is not None:
-        assert isinstance(series, pd.Series), "Input must be a pandas Series"
-        self.name = series.index.name if series.name == "n_obs" else series.name
-        assert len(series) > 0, "Empty series"
-        st = tabulate(series)
-        self.train_from_seriestable(st)
+        assert isinstance(series, pd.Series), "Expected a series"
+        counts = tabulate(series)
+        self.train_from_tabulation(counts=counts)
 
-    def point_density(self, item: Any) -> np.ndarray:
-        """Compute the density for an individual value. TODO: should not be for individual value."""
-        raise NotImplementedError
+    def point_density(self, item: Any) -> float:
+        """Compute the density for an individual value."""
+        if item in self.regularized_rates.index:
+            return self.regularized_rates.loc[item]
+        return self.out_of_sample_rate
 
     def density(self, X: pd.DataFrame) -> np.ndarray:
         """Fast density computation for a list of values.
@@ -60,18 +58,22 @@ class Multinomial(AbstractDensity):
             raise Exception("Only one-dimensional data is supported")
         series = X[X.columns[0]]
         assert isinstance(series, pd.Series)
-        df = (
-            pd.DataFrame({LEVELS: series, "idx": range(len(series))})
-            .merge(
-                pd.DataFrame({LEVELS: self.df.index.values, DENSITY: self.df[DENSITY].to_numpy()}),
-                on=LEVELS,
-                how="left",
-            )
-            .sort_values("idx")
+        base = pd.DataFrame({LEVELS: series, "idx": range(len(series))})
+        other = pd.DataFrame(
+            {
+                LEVELS: self.counts.counts.index.to_numpy(),
+                DENSITY: self.regularized_rates.to_numpy(),
+            }
         )
-        return df[DENSITY].fillna(self.out_of_sample_dens).to_numpy()
+        df = base.merge(other, on=LEVELS, how="left").sort_values("idx")
+        return df[DENSITY].fillna(self.out_of_sample_rate).to_numpy()
 
     def rvs(self, n: int = 1) -> pd.DataFrame:
         """Randomly sample from the multinomial distribution."""
-        values = np.random.choice(a=self.df.index.to_numpy(), size=n, p=self.df[DENSITY].to_numpy(), replace=True)
-        return pd.Series(values, name=self.name).to_frame()
+        values = np.random.choice(
+            a=self.counts.counts.index.to_numpy(),
+            size=n,
+            p=self.regularized_rates.to_numpy(),
+            replace=True,
+        )
+        return pd.Series(values, name=self.counts.name).to_frame()
