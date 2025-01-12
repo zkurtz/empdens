@@ -13,7 +13,7 @@ def test_cade_default():
 
 
 def test_cade():
-    # Compile a Cade class with all defaults
+    # Build a Cade model with all defaults
     np.random.seed(0)
     N = 100
     sz = simulators.Zena()
@@ -34,3 +34,19 @@ def test_cade():
     assert len(dens) == 3
     assert isinstance(dens, np.ndarray)
     assert dens.dtype == "float64"
+
+    # Build a Cade model including both
+    #  - a categorical feature
+    #  - a continuous feature that contains a couple of loners
+    np.random.seed(0)
+    N = 100
+    sz = simulators.Zena()
+    data = sz.rvs(100)
+    # Add a categorical feature
+    data["cat"] = ["A", "B", "C", "D"] * 25
+    # Define loners in continuous data:
+    data.loc[0:10, "gaussian"] = 0
+    data.loc[11:20, "gaussian"] = 1
+    cade = Cade(initial_density=JointDensity(), classifier=Lgbm(), sim_size=N)
+    cade.train(data, diagnostics=True)
+    _ = cade.density(data)
