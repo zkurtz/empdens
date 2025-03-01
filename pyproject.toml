@@ -1,6 +1,6 @@
 [project]
 name = "empdens"
-version = "1.4.4"
+version = "1.4.5"
 description = "Empirical density estimation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -23,6 +23,7 @@ dev = [
   "pytest >=8.3.2",
   "jupyter>=1.1.1",
   "ipykernel>=6.29.5",
+  "bump-my-version>=0.32.2",
 ]
 extras = [
     "astropy>=6.1.7",
@@ -32,6 +33,31 @@ extras = [
 
 [tool.uv]
 package = true
+
+[tool.bumpversion]
+current_version = "1.4.5"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+ignore_missing_files = false
+tag = false
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+moveable_tags = []
+commit_args = "--no-verify"
+setup_hooks = []
+pre_commit_hooks = []
+post_commit_hooks = []
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
 
 [build-system]
 requires = ["hatchling"]
@@ -64,6 +90,9 @@ line-length = 120
 select = [
   # ruff defaults:
   "E4", "E7", "E9", "F",
+  # pycodestyle line formatting including line length
+  "E5",
+  # additional rule groups:
   "I", # flake8-import-order
   "TID", # flake8-tidy-imports
   "D", # google-style docstrings
@@ -81,5 +110,4 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["D104"] # would require module-level documentation
-"test_*.py" = ["D"]
-"*.ipynb" = ["D"]
+"test_*.py" = ["D"] # would put requirements on docstrings in test files
